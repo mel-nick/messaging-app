@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 
 import {
   SET_MESSAGING_ACTIVE,
@@ -9,11 +9,12 @@ import {
   GET_MESSAGES_ERROR,
   SEND_MESSAGE_SUCCESS,
   SEND_MESSAGE_ERROR,
-} from './types';
+  INIT_CONVERSATION,
+} from "./types";
 
 const config = {
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 };
 
@@ -48,10 +49,10 @@ export const getMessages = (from, to) => async (dispatch) => {
 export const sendMessage = (data) => async (dispatch) => {
   dispatch({ type: SEND_MESSAGE });
   try {
-    const res = await axios.post(`/api/messages`, data, config);
+    await axios.post(`/api/messages`, data, config);
     await dispatch({
       type: SEND_MESSAGE_SUCCESS,
-      payload: res.data,
+      payload: data,
     });
   } catch (err) {
     console.log(err);
@@ -60,8 +61,14 @@ export const sendMessage = (data) => async (dispatch) => {
       payload: {
         // msg: err?.response?.data,
         // status: err?.response?.status,
-        msg: 'message have not been sent',
+        msg: "message have not been sent",
       },
     });
   }
+};
+export const initConversation = (data) => (dispatch) => {
+  dispatch({
+    type: INIT_CONVERSATION,
+    payload: data,
+  });
 };

@@ -1,15 +1,20 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const Message = require('./dbmodels/Message');
-// const path = require('path');
-const webSocket = require('socket.io');
-require('dotenv').config();
-
-const http = require('http');
+require("dotenv").config();
 const PORT = process.env.PORT || 5000;
+const express = require("express");
+const http = require("http");
+const mongoose = require("mongoose");
+
+// const Message = require("./dbmodels/Message")
+
 const app = express();
 const server = http.createServer(app);
-const ws = webSocket(server);
+
+const { Server } = require("socket.io");
+const io = new Server(server);
+// const path = require('path');
+// const socketio = require("socket.io");
+
+// const io = socketio(server);
 
 // Init Middleware
 app.use(
@@ -19,10 +24,10 @@ app.use(
 );
 
 //define routes
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/users', require('./routes/users'));
-app.use('/api/search', require('./routes/search'));
-app.use('/api/messages', require('./routes/messages'));
+app.use("/api/auth", require("./routes/auth"));
+app.use("/api/users", require("./routes/users"));
+app.use("/api/search", require("./routes/search"));
+app.use("/api/messages", require("./routes/messages"));
 
 //serve statisc assets
 // app.use(express.static(path.join(__dirname, "/client/build")));
@@ -43,12 +48,12 @@ mongoose.connect(process.env.MONGODB_URI, {
 });
 
 // Check connection
-db.once('open', function () {
-  console.log('Connected to MongoDB');
+db.once("open", function () {
+  console.log("Connected to MongoDB");
 });
 
 // Check for db errors
-db.on('error', function (err) {
+db.on("error", function (err) {
   console.error(err);
 });
 
@@ -76,8 +81,11 @@ db.on('error', function (err) {
 // });
 
 //run io when client connects
-ws.on('connection', (socket) => {
-  console.log('new WS connection...');
+io.on("connection", (socket) => {
+  console.log("new WS connection...");
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+  });
 });
 
 //app listen
