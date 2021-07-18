@@ -8,16 +8,21 @@ import {
   SEND_MESSAGE,
   SEND_MESSAGE_SUCCESS,
   SEND_MESSAGE_ERROR,
-} from '../actions/types';
+  INIT_CONVERSATION,
+  LOGOUT,
+} from "../actions/types";
+
+import { v4 as uuidv4 } from "uuid";
+const id = uuidv4();
 
 const initialState = {
   activeUsers: [],
-  // activeMessageWindow: {
+  // activeConversation: {
   //   from: null,
   //   to: null,
   //   messages: [],
   // },
-  activeMessageWindow: null,
+  activeConversation: null,
   loadingMessages: false,
   loadingMessagesError: null,
   currentUser: null,
@@ -35,7 +40,7 @@ export default function (state = initialState, action) {
         activeUsers:
           [
             ...new Map(
-              [...state.activeUsers, payload].map((item) => [item['_id'], item])
+              [...state.activeUsers, payload].map((item) => [item["_id"], item])
             ).values(),
           ] || [],
       };
@@ -47,9 +52,18 @@ export default function (state = initialState, action) {
     case GET_MESSAGES_SUCCESS:
       return {
         ...state,
-        activeMessageWindow: payload,
+        activeConversation: payload,
         loadingMessages: false,
         loadingMessagesError: null,
+      };
+    case INIT_CONVERSATION:
+      return {
+        ...state,
+        activeConversation: {
+          from: payload.from,
+          to: payload.to,
+          messages: [],
+        },
       };
     case SEND_MESSAGE:
       return {
@@ -60,19 +74,31 @@ export default function (state = initialState, action) {
       return {
         ...state,
         sendingMessage: false,
-        activeMessageWindow: payload,
+        activeConversation: {
+          ...state?.activeConversation,
+          messages: [
+            ...state?.activeConversation?.messages,
+            {
+              _id: `${id}`,
+              text: payload.text,
+              sender: payload.from,
+              date: Date.now(),
+            },
+          ],
+        },
         loadingMessagesError: null,
       };
+
     case SEND_MESSAGE_ERROR:
       return {
         ...state,
         sendingMessage: false,
-        loadingMessagesError: 'cant send your message',
+        loadingMessagesError: "cant send your message",
       };
     case GET_MESSAGES_ERROR:
       return {
         ...state,
-        activeMessageWindow: null,
+        activeConversation: null,
         loadingMessages: false,
         loadingMessagesError: payload,
       };
@@ -81,7 +107,8 @@ export default function (state = initialState, action) {
         ...state,
         currentUser: payload,
       };
-
+    case LOGOUT:
+      return initialState;
     default:
       return state;
   }

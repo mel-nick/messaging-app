@@ -1,21 +1,31 @@
-import React, { useEffect } from 'react';
-import { getMessages } from '../../actions/messaging';
-import { connect } from 'react-redux';
-import Message from './Message';
+import React, { useEffect } from "react";
+import { getMessages, initConversation } from "../../actions/messaging";
+import { connect } from "react-redux";
+import Message from "./Message";
 
 const Thread = ({
   loggedUser,
   currentUser,
-  activeMessageWindow,
+  activeConversation,
   getMessages,
   messages,
+  initConversation,
 }) => {
   useEffect(() => {
     currentUser && getMessages(loggedUser?._id, currentUser?._id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loggedUser, currentUser]);
 
-  return activeMessageWindow
+  useEffect(() => {
+    !activeConversation &&
+      initConversation({
+        from: loggedUser?._id,
+        to: currentUser?._id,
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loggedUser, currentUser, activeConversation]);
+
+  return activeConversation
     ? messages.map(({ _id, sender, text }) => (
         <Message
           key={_id}
@@ -24,13 +34,15 @@ const Thread = ({
           loggedUser={loggedUser}
         />
       ))
-    : 'You do not have any messages yet';
+    : "You do not have any messages yet";
 };
 const mapStateToProps = ({ auth, messaging }) => ({
   loggedUser: auth?.user,
   currentUser: messaging?.currentUser,
-  activeMessageWindow: messaging?.activeMessageWindow,
-  messages: messaging?.activeMessageWindow?.messages,
+  activeConversation: messaging?.activeConversation,
+  messages: messaging?.activeConversation?.messages,
 });
 
-export default connect(mapStateToProps, { getMessages })(Thread);
+export default connect(mapStateToProps, { getMessages, initConversation })(
+  Thread
+);
