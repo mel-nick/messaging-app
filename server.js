@@ -1,8 +1,8 @@
-require("dotenv").config();
+require('dotenv').config();
 const PORT = process.env.PORT || 5000;
-const express = require("express");
-const http = require("http");
-const mongoose = require("mongoose");
+const express = require('express');
+const http = require('http');
+const mongoose = require('mongoose');
 
 // const Message = require("./dbmodels/Message")
 
@@ -13,7 +13,7 @@ const server = http.createServer(app);
 // const io = new Server(server);
 // const path = require('path');
 
-const socketio = require("socket.io");
+const socketio = require('socket.io');
 const io = socketio(server);
 
 // Init Middleware
@@ -24,10 +24,10 @@ app.use(
 );
 
 //define routes
-app.use("/api/auth", require("./routes/auth"));
-app.use("/api/users", require("./routes/users"));
-app.use("/api/search", require("./routes/search"));
-app.use("/api/messages", require("./routes/messages"));
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/users', require('./routes/users'));
+app.use('/api/search', require('./routes/search'));
+app.use('/api/messages', require('./routes/messages'));
 
 //serve statisc assets
 // app.use(express.static(path.join(__dirname, "/client/build")));
@@ -48,12 +48,12 @@ mongoose.connect(process.env.MONGODB_URI, {
 });
 
 // Check connection
-db.once("open", function () {
-  console.log("Connected to MongoDB");
+db.once('open', function () {
+  console.log('Connected to MongoDB');
 });
 
 // Check for db errors
-db.on("error", function (err) {
+db.on('error', function (err) {
   console.error(err);
 });
 
@@ -94,29 +94,30 @@ const setUserOffline = (socketId) => {
 const getuser = (userId) => onlineUsers.find((user) => user.userId === userId);
 
 //run io when client connects
-io.on("connection", (socket) => {
+io.on('connection', (socket) => {
   // console.log("new user connected...");
 
-  socket.on("setUserOnline", (userId) => {
+  socket.on('setUserOnline', (userId) => {
     setUserOnline(userId, socket.id);
-    io.emit("getOnlineUsers", onlineUsers);
-    console.log("Online users ", onlineUsers);
+    io.emit('getOnlineUsers', onlineUsers);
+    console.log('Online users ', onlineUsers);
   });
 
-  socket.on("sendMessage", ({ from, to, text }) => {
+  socket.on('sendMessage', ({ from, to, text }) => {
     const user = getuser(to);
-    io.to(user?.socketId).emit("getMessage", {
-      to,
-      from,
-      text,
-    });
+    user &&
+      io.to(user.socketId).emit('getMessage', {
+        to,
+        from,
+        text,
+      });
   });
 
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
     setUserOffline(socket.id);
-    io.emit("getOnlineUsers", onlineUsers);
-    console.log("online users", onlineUsers);
+    io.emit('getOnlineUsers', onlineUsers);
+    console.log('online users', onlineUsers);
   });
 });
 
