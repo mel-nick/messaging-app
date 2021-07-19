@@ -9,12 +9,12 @@ const mongoose = require("mongoose");
 const app = express();
 const server = http.createServer(app);
 
-const { Server } = require("socket.io");
-const io = new Server(server);
+// const { Server } = require("socket.io");
+// const io = new Server(server);
 // const path = require('path');
-// const socketio = require("socket.io");
 
-// const io = socketio(server);
+const socketio = require("socket.io");
+const io = socketio(server);
 
 // Init Middleware
 app.use(
@@ -80,11 +80,43 @@ db.on("error", function (err) {
 //   }
 // });
 
+let onlineUsers = [];
+
+const setUserOnline = (userId, socketId) => {
+  !onlineUsers.some((user) => user.userId === userId) &&
+    onlineUsers.push({ userId, socketId });
+};
+
+const setUserOffline = (socketId) => {
+  onlineUsers = onlineUsers.filter((user) => user.socketId !== socketId);
+};
+
+const getuser = (userId) => onlineUsers.find((user) => user.userId === userId);
+
 //run io when client connects
 io.on("connection", (socket) => {
-  console.log("new WS connection...");
+  // console.log("new user connected...");
+
+  socket.on("setUserOnline", (userId) => {
+    setUserOnline(userId, socket.id);
+    io.emit("getOnlineUsers", onlineUsers);
+    console.log("Online users ", onlineUsers);
+  });
+
+  socket.on("sendMessage", ({ from, to, text }) => {
+    const user = getuser(to);
+    io.to(user?.socketId).emit("getMessage", {
+      to,
+      from,
+      text,
+    });
+  });
+
   socket.on("disconnect", () => {
     console.log("user disconnected");
+    setUserOffline(socket.id);
+    io.emit("getOnlineUsers", onlineUsers);
+    console.log("online users", onlineUsers);
   });
 });
 

@@ -1,26 +1,30 @@
-import React, { useState, useRef } from 'react';
-import { useStyles } from './footerStyles';
-import Button from '@material-ui/core/Button';
-import SendIcon from '@material-ui/icons/Send';
-import TextField from '@material-ui/core/TextField';
-import { connect } from 'react-redux';
-import { sendMessage } from '../../actions/messaging';
+import React, { useState, useRef } from "react";
+import { useStyles } from "./footerStyles";
+import Button from "@material-ui/core/Button";
+import SendIcon from "@material-ui/icons/Send";
+import TextField from "@material-ui/core/TextField";
+import { connect } from "react-redux";
+import { sendMessage } from "../../actions/messaging";
 
-const Footer = ({ currentUser, loggedUser, sendMessage }) => {
+const Footer = ({ currentUser, loggedUser, sendMessage, socket }) => {
   const classes = useStyles();
 
   let textInput = useRef(null);
 
-  const [text, setText] = useState({
-    text: '',
-  });
+  const [text, setText] = useState({ text: "" });
 
   const handleInputChange = (e) => setText({ text: e.target.value });
 
   const handleSendMessage = (e) => {
     e.preventDefault();
     sendMessage({ ...text, from: loggedUser?._id, to: currentUser?._id });
-    textInput.current.value = '';
+
+    socket.emit("sendMessage", {
+      ...text,
+      from: loggedUser?._id,
+      to: currentUser?._id,
+    });
+    textInput.current.value = "";
   };
 
   return (
@@ -29,21 +33,21 @@ const Footer = ({ currentUser, loggedUser, sendMessage }) => {
         <form
           className={classes.inputRoot}
           noValidate
-          autoComplete='off'
+          autoComplete="off"
           onSubmit={handleSendMessage}
         >
           <TextField
-            id='outlined-basic'
-            label='Write your message'
-            variant='outlined'
+            id="outlined-basic"
+            label="Write your message"
+            variant="outlined"
             onChange={handleInputChange}
             fullWidth
             inputRef={textInput}
           />
         </form>
         <Button
-          variant='contained'
-          color='primary'
+          variant="contained"
+          color="primary"
           className={classes.button}
           endIcon={<SendIcon>send</SendIcon>}
           onClick={handleSendMessage}

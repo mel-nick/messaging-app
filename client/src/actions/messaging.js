@@ -10,6 +10,7 @@ import {
   SEND_MESSAGE_SUCCESS,
   SEND_MESSAGE_ERROR,
   INIT_CONVERSATION,
+  SET_ARRIVAL_MESSAGE,
 } from "./types";
 
 const config = {
@@ -69,6 +70,13 @@ export const sendMessage = (data) => async (dispatch) => {
 export const initConversation = (data) => (dispatch) => {
   dispatch({
     type: INIT_CONVERSATION,
+    payload: data,
+  });
+};
+
+export const setArrivalMessage = (data) => (dispatch) => {
+  dispatch({
+    type: SET_ARRIVAL_MESSAGE,
     payload: data,
   });
 };
