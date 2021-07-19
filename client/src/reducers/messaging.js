@@ -11,17 +11,12 @@ import {
   INIT_CONVERSATION,
   LOGOUT,
 } from "../actions/types";
-
 import { v4 as uuidv4 } from "uuid";
+
 const id = uuidv4();
 
 const initialState = {
   activeUsers: [],
-  // activeConversation: {
-  //   from: null,
-  //   to: null,
-  //   messages: [],
-  // },
   activeConversation: null,
   loadingMessages: false,
   loadingMessagesError: null,

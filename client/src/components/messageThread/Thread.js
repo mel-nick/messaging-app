@@ -32,6 +32,7 @@ const Thread = ({
           sender={sender}
           text={text}
           loggedUser={loggedUser}
+          currentUser={currentUser}
         />
       ))
     : "You do not have any messages yet";
