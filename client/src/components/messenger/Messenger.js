@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { connect } from "react-redux";
 // import Typography from '@material-ui/core/Typography';
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
@@ -6,13 +7,14 @@ import Hidden from "@material-ui/core/Hidden";
 import { useTheme } from "@material-ui/core/styles";
 import axios from "axios";
 import Bar from "./Bar";
-import { useStyles } from "./drawerStyles";
+import { useStyles } from "./messengerStyles";
 import SidePanel from "./SidePanel";
 import Footer from "./Footer";
 import Thread from "../messageThread/Thread";
 import { io } from "socket.io-client";
+import { setArrivalMessage } from "../../actions/messaging";
 
-const ResponsiveDrawer = ({ window }) => {
+const Messenger = ({ window, loggedInUser, setArrivalMessage }) => {
   const classes = useStyles();
   const theme = useTheme();
 
@@ -39,6 +41,17 @@ const ResponsiveDrawer = ({ window }) => {
     setSocket(io());
   }, []);
 
+  useEffect(() => {
+    if (socket && loggedInUser) {
+      socket.emit("setUserOnline", loggedInUser?._id);
+      // socket?.on("getOnlineUsers", (users) => console.log("online users", users));
+      socket.on("getMessage", (message) => {
+        loggedInUser?._id === message?.to && setArrivalMessage(message);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loggedInUser, socket]);
+
   const container =
     window !== undefined ? () => window().document.body : undefined;
 
@@ -58,7 +71,7 @@ const ResponsiveDrawer = ({ window }) => {
               paper: classes.drawerPaper,
             }}
             ModalProps={{
-              keepMounted: true, // Better open performance on mobile.
+              keepMounted: true,
             }}
           >
             <SidePanel
@@ -90,9 +103,13 @@ const ResponsiveDrawer = ({ window }) => {
         <div className={classes.toolbar} />
         <Thread />
       </main>
-      <Footer />
+      <Footer socket={socket} />
     </div>
   );
 };
 
-export default ResponsiveDrawer;
+const mapStateToProps = ({ auth }) => ({
+  loggedInUser: auth?.user,
+});
+
+export default connect(mapStateToProps, { setArrivalMessage })(Messenger);

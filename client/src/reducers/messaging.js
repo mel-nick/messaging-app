@@ -9,11 +9,10 @@ import {
   SEND_MESSAGE_SUCCESS,
   SEND_MESSAGE_ERROR,
   INIT_CONVERSATION,
+  SET_ARRIVAL_MESSAGE,
   LOGOUT,
 } from "../actions/types";
 import { v4 as uuidv4 } from "uuid";
-
-const id = uuidv4();
 
 const initialState = {
   activeUsers: [],
@@ -74,7 +73,7 @@ export default function (state = initialState, action) {
           messages: [
             ...state?.activeConversation?.messages,
             {
-              _id: `${id}`,
+              _id: uuidv4(),
               text: payload.text,
               sender: payload.from,
               date: Date.now(),
@@ -83,7 +82,24 @@ export default function (state = initialState, action) {
         },
         loadingMessagesError: null,
       };
-
+    case SET_ARRIVAL_MESSAGE:
+      return {
+        ...state,
+        sendingMessage: false,
+        activeConversation: {
+          ...state?.activeConversation,
+          messages: [
+            ...state?.activeConversation?.messages,
+            {
+              _id: uuidv4(),
+              text: payload.text,
+              sender: payload.from,
+              date: Date.now(),
+            },
+          ],
+        },
+        loadingMessagesError: null,
+      };
     case SEND_MESSAGE_ERROR:
       return {
         ...state,

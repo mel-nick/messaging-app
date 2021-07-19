@@ -1,16 +1,16 @@
-import React, { Fragment } from 'react';
-import { useStyles } from './drawerStyles';
-import { connect } from 'react-redux';
-import Typography from '@material-ui/core/Typography';
-import Avatar from '@material-ui/core/Avatar';
-import LogOutSwitch from './LogOutSwitch';
-import Divider from '@material-ui/core/Divider';
-import InputBase from '@material-ui/core/InputBase';
-import SearchIcon from '@material-ui/icons/Search';
-import ClearIcon from '@material-ui/icons/Clear';
-import User from '../user/User';
-import ActiveContacts from '../contacts/ActiveContacts';
-import { setActiveMessaging, getMessages } from '../../actions/messaging';
+import React, { Fragment } from "react";
+import { useStyles } from "./messengerStyles";
+import { connect } from "react-redux";
+import Typography from "@material-ui/core/Typography";
+import Avatar from "@material-ui/core/Avatar";
+import LogOutSwitch from "./LogOutSwitch";
+import Divider from "@material-ui/core/Divider";
+import InputBase from "@material-ui/core/InputBase";
+import SearchIcon from "@material-ui/icons/Search";
+import ClearIcon from "@material-ui/icons/Clear";
+import User from "../user/User";
+import ActiveContacts from "../contacts/ActiveContacts";
+import { setActiveMessaging, getMessages } from "../../actions/messaging";
 
 const SidePanel = ({
   loggedUser,
@@ -25,7 +25,7 @@ const SidePanel = ({
 
   const handleSearchClear = () => {
     setSearchData([]);
-    setSearchString('');
+    setSearchString("");
   };
 
   return (
@@ -39,8 +39,8 @@ const SidePanel = ({
           />
         </div>
         <div className={classes.userData}>
-          <Typography align='center' variant='h6'>
-            {loggedUser?.firstName} {''} {loggedUser?.lastName}
+          <Typography align="center" variant="h6">
+            {loggedUser?.firstName} {""} {loggedUser?.lastName}
           </Typography>
         </div>
         <div className={classes.search}>
@@ -52,12 +52,12 @@ const SidePanel = ({
             )}
           </div>
           <InputBase
-            placeholder='Search contacts…'
+            placeholder="Search contacts…"
             classes={{
               root: classes.inputRoot,
               input: classes.inputInput,
             }}
-            inputProps={{ 'aria-label': 'search' }}
+            inputProps={{ "aria-label": "search" }}
             value={searchString}
             onChange={(e) => {
               !e.target.value && handleSearchClear();
