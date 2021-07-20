@@ -10,7 +10,6 @@ const Thread = ({
   getMessages,
   messages,
   initConversation,
-  socket,
   typing,
 }) => {
   const scrollToBottom = () => {
@@ -47,7 +46,6 @@ const Thread = ({
           text={text}
           loggedUser={loggedUser}
           currentUser={currentUser}
-          socket={socket}
         />
       ))}
       {typing && <div>typing...</div>}

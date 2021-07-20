@@ -1,12 +1,15 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { useStyles } from "./footerStyles";
 import Button from "@material-ui/core/Button";
 import SendIcon from "@material-ui/icons/Send";
 import TextField from "@material-ui/core/TextField";
 import { connect } from "react-redux";
 import { sendMessage } from "../../actions/messaging";
+import { SocketContext } from "../../context";
 
-const Footer = ({ currentUser, loggedUser, sendMessage, socket }) => {
+const Footer = ({ currentUser, loggedUser, sendMessage }) => {
+  const { socket } = useContext(SocketContext);
+
   const classes = useStyles();
 
   let textInput = useRef(null);

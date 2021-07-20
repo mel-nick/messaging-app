@@ -8,7 +8,7 @@ export default function (state = initialState, action) {
 
   switch (type) {
     case GET_ONLINE_USERS:
-      return [...state, ...payload];
+      return [...payload];
     default:
       return state;
   }

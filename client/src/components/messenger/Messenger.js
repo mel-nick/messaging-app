@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import { connect } from "react-redux";
 // import Typography from '@material-ui/core/Typography';
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -11,9 +11,9 @@ import { useStyles } from "./messengerStyles";
 import SidePanel from "./SidePanel";
 import Footer from "./Footer";
 import Thread from "../messageThread/Thread";
-import { io } from "socket.io-client";
 import { setArrivalMessage } from "../../actions/messaging";
 import { getOnlineUsers } from "../../actions/users";
+import { SocketContext } from "../../context";
 
 const Messenger = ({
   window,
@@ -21,13 +21,14 @@ const Messenger = ({
   setArrivalMessage,
   getOnlineUsers,
 }) => {
+  const { socket } = useContext(SocketContext);
+
   const classes = useStyles();
   const theme = useTheme();
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [data, setData] = useState([]);
   const [searchString, setSearchString] = useState("");
-  const [socket, setSocket] = useState(null);
   const [typing, setTyping] = useState(false);
 
   const handleDrawerToggle = () => {
@@ -45,11 +46,8 @@ const Messenger = ({
   }, [searchString, searchUsers]);
 
   useEffect(() => {
-    setSocket(io());
-  }, []);
-
-  useEffect(() => {
     if (socket && loggedInUser) {
+      socket.connect();
       socket.emit("setUserOnline", loggedInUser?._id);
       socket.on("getOnlineUsers", (users) => getOnlineUsers(users));
       socket.on(
@@ -118,9 +116,9 @@ const Messenger = ({
       </nav>
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        <Thread socket={socket} typing={typing} />
+        <Thread typing={typing} />
       </main>
-      <Footer socket={socket} />
+      <Footer />
     </div>
   );
 };
