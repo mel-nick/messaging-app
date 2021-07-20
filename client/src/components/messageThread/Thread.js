@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
-import { getMessages, initConversation } from '../../actions/messaging';
-import { connect } from 'react-redux';
-import Message from './Message';
+import React, { useEffect } from "react";
+import { getMessages, initConversation } from "../../actions/messaging";
+import { connect } from "react-redux";
+import Message from "./Message";
 
 const Thread = ({
   loggedUser,
@@ -10,15 +10,17 @@ const Thread = ({
   getMessages,
   messages,
   initConversation,
+  socket,
+  typing,
 }) => {
   const scrollToBottom = () => {
     window.scrollTo({
       top: document.documentElement.scrollHeight,
-      behavior: 'smooth',
+      behavior: "smooth",
     });
   };
 
-  window.addEventListener('scroll', () => {});
+  window.addEventListener("scroll", () => {});
 
   useEffect(() => {
     currentUser && getMessages(loggedUser?._id, currentUser?._id);
@@ -45,11 +47,13 @@ const Thread = ({
           text={text}
           loggedUser={loggedUser}
           currentUser={currentUser}
+          socket={socket}
         />
       ))}
+      {typing && <div>typing...</div>}
     </div>
   ) : (
-    'You do not have any messages yet'
+    "You do not have any messages yet"
   );
 };
 const mapStateToProps = ({ auth, messaging }) => ({
