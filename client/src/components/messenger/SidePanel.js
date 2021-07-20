@@ -20,6 +20,7 @@ const SidePanel = ({
   setSearchData,
   setActiveMessaging,
   currentUser,
+  onlineUsers,
 }) => {
   const classes = useStyles();
 
@@ -68,32 +69,45 @@ const SidePanel = ({
       </div>
       <Divider />
       <div>
-        {!searchString ? (
-          <ActiveContacts />
-        ) : (
-          searchResults
-            .filter(({ _id }) => _id !== loggedUser._id)
-            .map((user) => (
-              <User
-                key={user._id}
-                user={user}
-                onClickHandler={() => {
-                  if (currentUser?._id !== user._id) {
-                    setActiveMessaging(user);
-                  }
-                  handleSearchClear();
-                }}
-              />
-            ))
-        )}
+        {!searchString
+          ? onlineUsers
+              .filter(({ _id }) => _id !== loggedUser._id)
+              .map((user) => (
+                <User
+                  online={true}
+                  key={user._id}
+                  user={user}
+                  onClickHandler={() => {
+                    if (currentUser?._id !== user._id) {
+                      setActiveMessaging(user);
+                    }
+                    handleSearchClear();
+                  }}
+                />
+              ))
+          : searchResults
+              .filter(({ _id }) => _id !== loggedUser._id)
+              .map((user) => (
+                <User
+                  key={user._id}
+                  user={user}
+                  onClickHandler={() => {
+                    if (currentUser?._id !== user._id) {
+                      setActiveMessaging(user);
+                    }
+                    handleSearchClear();
+                  }}
+                />
+              ))}
       </div>
     </Fragment>
   );
 };
 
-const mapStateToProps = ({ auth, messaging }) => ({
+const mapStateToProps = ({ auth, messaging, onlineUsers }) => ({
   loggedUser: auth?.user,
   currentUser: messaging?.currentUser,
+  onlineUsers,
 });
 
 export default connect(mapStateToProps, { setActiveMessaging, getMessages })(
