@@ -1,9 +1,9 @@
-import React from 'react';
-import Switch from '@material-ui/core/Switch';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormGroup from '@material-ui/core/FormGroup';
-import { connect } from 'react-redux';
-import { logout } from '../../actions/auth';
+import React from "react";
+import Switch from "@material-ui/core/Switch";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormGroup from "@material-ui/core/FormGroup";
+import { connect } from "react-redux";
+import { logout } from "../../actions/auth";
 
 const LogOutSwitch = ({ logout, isAuthenticated }) => {
   const handleLogOut = () => {
@@ -12,10 +12,10 @@ const LogOutSwitch = ({ logout, isAuthenticated }) => {
 
   const styles = {
     root: {
-      alignItems: 'flex-end',
+      alignItems: "flex-end",
     },
     switch: {
-      flexDirection: 'row-reverse',
+      flexDirection: "row-reverse",
     },
   };
 
@@ -27,10 +27,10 @@ const LogOutSwitch = ({ logout, isAuthenticated }) => {
           <Switch
             checked={isAuthenticated}
             onChange={handleLogOut}
-            aria-label='login switch'
+            aria-label="login switch"
           />
         }
-        label={isAuthenticated ? 'Logout' : null}
+        label={isAuthenticated ? "Logout" : null}
       />
     </FormGroup>
   );
