@@ -37,7 +37,7 @@ const Thread = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loggedUser, currentUser, activeConversation]);
 
-  return activeConversation ? (
+  return activeConversation && currentUser ? (
     <div>
       {messages.map(({ _id, sender, text }) => (
         <Message

@@ -56,12 +56,9 @@ export const sendMessage = (data) => async (dispatch) => {
       payload: data,
     });
   } catch (err) {
-    console.log(err);
     dispatch({
       type: SEND_MESSAGE_ERROR,
       payload: {
-        // msg: err?.response?.data,
-        // status: err?.response?.status,
         msg: "message have not been sent",
       },
     });

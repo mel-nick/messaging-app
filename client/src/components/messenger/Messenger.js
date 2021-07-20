@@ -48,7 +48,7 @@ const Messenger = ({
   useEffect(() => {
     if (socket && loggedInUser) {
       socket.connect();
-      socket.emit("setUserOnline", loggedInUser?._id);
+      socket.emit("setUserOnline", loggedInUser);
       socket.on("getOnlineUsers", (users) => getOnlineUsers(users));
       socket.on(
         "getMessage",

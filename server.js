@@ -7,12 +7,12 @@ const mongoose = require("mongoose");
 const app = express();
 const server = http.createServer(app);
 
-// const { Server } = require("socket.io");
-// const io = new Server(server);
+const { Server } = require("socket.io");
+const io = new Server(server);
 // const path = require('path');
 
-const socketio = require("socket.io");
-const io = socketio(server);
+// const socketio = require("socket.io");
+// const io = socketio(server);
 
 // Init Middleware
 app.use(
@@ -57,23 +57,23 @@ db.on("error", function (err) {
 
 let onlineUsers = [];
 
-const setUserOnline = (userId, socketId) => {
-  !onlineUsers.some((user) => user.userId === userId) &&
-    onlineUsers.push({ userId, socketId });
+const setUserOnline = (user, socketId) => {
+  !onlineUsers.some((user) => user.userId === user._id) &&
+    onlineUsers.push({ ...user, socketId });
 };
 
 const setUserOffline = (socketId) => {
   onlineUsers = onlineUsers.filter((user) => user.socketId !== socketId);
 };
 
-const getuser = (userId) => onlineUsers.find((user) => user.userId === userId);
+const getuser = (userId) => onlineUsers.find((user) => user._id === userId);
 
 //run io when client connects
 io.on("connection", (socket) => {
   console.log("new user connected...");
 
-  socket.on("setUserOnline", (userId) => {
-    setUserOnline(userId, socket.id);
+  socket.on("setUserOnline", (user) => {
+    setUserOnline(user, socket.id);
     io.emit("getOnlineUsers", onlineUsers);
     console.log("Online users ", onlineUsers);
   });
