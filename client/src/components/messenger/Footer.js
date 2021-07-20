@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useStyles } from "./footerStyles";
 import Button from "@material-ui/core/Button";
 import SendIcon from "@material-ui/icons/Send";
@@ -12,6 +12,18 @@ const Footer = ({ currentUser, loggedUser, sendMessage, socket }) => {
   let textInput = useRef(null);
 
   const [text, setText] = useState({ text: "" });
+  const [timeOfLastKeyPress, setTimeOfLastKeyPress] = useState(0);
+  const [typing, setTyping] = useState(false);
+
+  const checkInterval = () => {
+    if (Date.now() - timeOfLastKeyPress > 3000) {
+      setTyping(false);
+    }
+  };
+
+  useEffect(() => {
+    socket && !typing && socket.emit("typingMessageEnd", currentUser?._id);
+  }, [currentUser, typing, socket]);
 
   const handleInputChange = (e) => setText({ text: e.target.value });
 
@@ -27,6 +39,17 @@ const Footer = ({ currentUser, loggedUser, sendMessage, socket }) => {
     textInput.current.value = "";
   };
 
+  const timeOfFirstKeyPress = Date.now();
+  const handleKeyPress = () => {
+    const lastKeyPressTime = Date.now();
+    if (lastKeyPressTime - timeOfFirstKeyPress < 3000) {
+      setTyping(true);
+      socket.emit("typingMessageStart", currentUser?._id);
+      setTimeOfLastKeyPress(lastKeyPressTime);
+    }
+    setTimeout(checkInterval, 5000);
+  };
+
   return (
     currentUser && (
       <footer className={[classes.footer]}>
@@ -35,6 +58,7 @@ const Footer = ({ currentUser, loggedUser, sendMessage, socket }) => {
           noValidate
           autoComplete="off"
           onSubmit={handleSendMessage}
+          onKeyUp={handleKeyPress}
         >
           <TextField
             id="outlined-basic"

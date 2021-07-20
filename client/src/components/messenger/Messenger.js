@@ -13,8 +13,14 @@ import Footer from "./Footer";
 import Thread from "../messageThread/Thread";
 import { io } from "socket.io-client";
 import { setArrivalMessage } from "../../actions/messaging";
+import { getOnlineUsers } from "../../actions/users";
 
-const Messenger = ({ window, loggedInUser, setArrivalMessage }) => {
+const Messenger = ({
+  window,
+  loggedInUser,
+  setArrivalMessage,
+  getOnlineUsers,
+}) => {
   const classes = useStyles();
   const theme = useTheme();
 
@@ -22,6 +28,7 @@ const Messenger = ({ window, loggedInUser, setArrivalMessage }) => {
   const [data, setData] = useState([]);
   const [searchString, setSearchString] = useState("");
   const [socket, setSocket] = useState(null);
+  const [typing, setTyping] = useState(false);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -44,10 +51,20 @@ const Messenger = ({ window, loggedInUser, setArrivalMessage }) => {
   useEffect(() => {
     if (socket && loggedInUser) {
       socket.emit("setUserOnline", loggedInUser?._id);
-      // socket?.on("getOnlineUsers", (users) => console.log("online users", users));
-      socket.on("getMessage", (message) => {
-        loggedInUser?._id === message?.to && setArrivalMessage(message);
-      });
+      socket.on("getOnlineUsers", (users) => getOnlineUsers(users));
+      socket.on(
+        "getMessage",
+        (message) =>
+          loggedInUser?._id === message?.to && setArrivalMessage(message)
+      );
+      socket.on(
+        "isTyping",
+        (to) => loggedInUser?._id === to && setTyping(true)
+      );
+      socket.on(
+        "notTyping",
+        (to) => loggedInUser?._id === to && setTyping(false)
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loggedInUser, socket]);
@@ -101,7 +118,7 @@ const Messenger = ({ window, loggedInUser, setArrivalMessage }) => {
       </nav>
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        <Thread />
+        <Thread socket={socket} typing={typing} />
       </main>
       <Footer socket={socket} />
     </div>
@@ -112,4 +129,6 @@ const mapStateToProps = ({ auth }) => ({
   loggedInUser: auth?.user,
 });
 
-export default connect(mapStateToProps, { setArrivalMessage })(Messenger);
+export default connect(mapStateToProps, { setArrivalMessage, getOnlineUsers })(
+  Messenger
+);

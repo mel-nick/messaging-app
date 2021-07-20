@@ -65,23 +65,6 @@ export default function (state = initialState, action) {
         sendingMessage: true,
       };
     case SEND_MESSAGE_SUCCESS:
-      return {
-        ...state,
-        sendingMessage: false,
-        activeConversation: {
-          ...state?.activeConversation,
-          messages: [
-            ...state?.activeConversation?.messages,
-            {
-              _id: uuidv4(),
-              text: payload.text,
-              sender: payload.from,
-              date: Date.now(),
-            },
-          ],
-        },
-        loadingMessagesError: null,
-      };
     case SET_ARRIVAL_MESSAGE:
       return {
         ...state,
