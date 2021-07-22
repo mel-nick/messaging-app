@@ -71,14 +71,14 @@ const SidePanel = ({
       <div>
         {!searchString
           ? onlineUsers
-              .filter(({ _id }) => _id !== loggedUser._id)
+              .filter(({ _id }) => _id !== loggedUser?._id)
               .map((user) => (
                 <User
                   online={true}
                   key={user._id}
                   user={user}
                   onClickHandler={() => {
-                    if (currentUser?._id !== user._id) {
+                    if (currentUser?._id !== user?._id) {
                       setActiveMessaging(user);
                     }
                     handleSearchClear();
@@ -86,13 +86,13 @@ const SidePanel = ({
                 />
               ))
           : searchResults
-              .filter(({ _id }) => _id !== loggedUser._id)
+              .filter(({ _id }) => _id !== loggedUser?._id)
               .map((user) => (
                 <User
                   key={user._id}
                   user={user}
                   onClickHandler={() => {
-                    if (currentUser?._id !== user._id) {
+                    if (currentUser?._id !== user?._id) {
                       setActiveMessaging(user);
                     }
                     handleSearchClear();
