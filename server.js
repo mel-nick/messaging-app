@@ -58,12 +58,12 @@ const getuser = (userId) => onlineUsers.find((user) => user._id === userId);
 
 //run io when client connects
 io.on("connection", (socket) => {
-  console.log("new user connected...");
+  // console.log("new user connected...");
 
   socket.on("setUserOnline", (user) => {
     setUserOnline(user, socket.id);
     io.emit("getOnlineUsers", onlineUsers);
-    console.log("Online users ", onlineUsers);
+    // console.log("Online users ", onlineUsers);
   });
 
   socket.on("sendMessage", ({ from, to, text }) => {
@@ -79,19 +79,19 @@ io.on("connection", (socket) => {
   socket.on("typingMessageStart", (to) => {
     const user = getuser(to);
     user && io.to(user.socketId).emit("isTyping", to);
-    console.log("user is typing message to...", to);
+    // console.log("user is typing message to...", to);
   });
   socket.on("typingMessageEnd", (to) => {
     const user = getuser(to);
     user && io.to(user.socketId).emit("notTyping", to);
-    console.log("user is not typing to...", to);
+    // console.log("user is not typing to...", to);
   });
 
   socket.on("disconnect", () => {
-    console.log("user disconnected");
+    // console.log("user disconnected");
     setUserOffline(socket.id);
     io.emit("getOnlineUsers", onlineUsers);
-    console.log("online users", onlineUsers);
+    // console.log("online users", onlineUsers);
   });
 });
 
