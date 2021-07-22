@@ -1,13 +1,12 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { check, validationResult } = require('express-validator');
+const { check, validationResult } = require("express-validator");
 
-const Message = require('../dbmodels/Message');
+const Message = require("../dbmodels/Message");
 
-//post a message
 router.post(
-  '/',
-  [check('text', 'Text message is required').not().isEmpty()],
+  "/",
+  [check("text", "Text message is required").not().isEmpty()],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -17,7 +16,6 @@ router.post(
     }
     const { from, to, text } = req.body;
     try {
-      //check if the thread exists
       let thread = await Message.findOne({
         $or: [
           {
@@ -46,17 +44,14 @@ router.post(
       res.json(thread);
     } catch (err) {
       console.error(err.message);
-      res.status(500).send('Server error');
+      res.status(500).send("Server error");
     }
   }
 );
 
-//get messaging history
-
-router.post('/history', async (req, res) => {
+router.post("/history", async (req, res) => {
   const { from, to } = req.body;
   try {
-    //check if the thread exists
     let thread = await Message.findOne({
       $or: [
         {
@@ -68,12 +63,12 @@ router.post('/history', async (req, res) => {
       ],
     });
     if (!thread) {
-      return res.status(404).send('No messages found! Start chating!');
+      return res.status(404).send("No messages found! Start chating!");
     }
     res.json(thread);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(500).send("Server error");
   }
 });
 

@@ -7,13 +7,17 @@ import {
   LOGIN_SUCCESS,
   LOGIN_FAIL,
   LOGOUT,
-} from '../actions/types';
+  HIDE_ERROR_TOASTER,
+  SHOW_ERROR_TOASTER,
+} from "../actions/types";
 
 const initialState = {
-  token: localStorage.getItem('token'),
+  token: localStorage.getItem("token"),
   isAuthenticated: null,
   loading: true,
   user: null,
+  errorMessage: null,
+  showErrorToastr: false,
 };
 
 export default function (state = initialState, action) {
@@ -26,28 +30,54 @@ export default function (state = initialState, action) {
         isAuthenticated: true,
         user: payload,
         loading: false,
+        errorMessage: null,
       };
 
     case REGISTER_SUCCESS:
     case LOGIN_SUCCESS:
-      localStorage.setItem('token', payload.token);
+      localStorage.setItem("token", payload.token);
       return {
         ...state,
         ...payload,
         isAuthenticated: true,
         loading: false,
+        errorMessage: null,
       };
     case REGISTER_FAIL:
-    case AUTH_ERROR:
     case LOGIN_FAIL:
-    case LOGOUT:
-      localStorage.removeItem('token');
+      localStorage.removeItem("token");
       return {
         ...state,
         token: null,
         isAuthenticated: false,
         loading: false,
         user: null,
+        errorMessage: payload,
+        showErrorToastr: true,
+      };
+    case SHOW_ERROR_TOASTER:
+      return {
+        ...state,
+        errorMessage: payload,
+        showErrorToastr: true,
+      };
+    case HIDE_ERROR_TOASTER:
+      return {
+        ...state,
+        errorMessage: null,
+        showErrorToastr: false,
+      };
+    case AUTH_ERROR:
+    case LOGOUT:
+      localStorage.removeItem("token");
+      return {
+        ...state,
+        token: null,
+        isAuthenticated: false,
+        loading: false,
+        user: null,
+        errorMessage: null,
+        showErrorToastr: false,
       };
     default:
       return state;

@@ -20,6 +20,7 @@
   "author": "MelNick",
   "license": "ISC",
   "dependencies": {
+    "@material-ui/lab": "^4.0.0-alpha.60",
     "bcrypt": "^5.0.1",
     "config": "^3.3.6",
     "dotenv": "^10.0.0",

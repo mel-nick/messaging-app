@@ -1,27 +1,20 @@
 require("dotenv").config();
-const PORT = process.env.PORT || 5000;
 const express = require("express");
 const http = require("http");
 const mongoose = require("mongoose");
-
+// const path = require('path');
+const PORT = process.env.PORT || 5000;
 const app = express();
 const server = http.createServer(app);
-
 const { Server } = require("socket.io");
 const io = new Server(server);
-// const path = require('path');
 
-// const socketio = require("socket.io");
-// const io = socketio(server);
-
-// Init Middleware
 app.use(
   express.json({
     extended: false,
   })
 );
 
-//define routes
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/users", require("./routes/users"));
 app.use("/api/search", require("./routes/search"));
@@ -29,15 +22,12 @@ app.use("/api/messages", require("./routes/messages"));
 
 //serve statisc assets
 // app.use(express.static(path.join(__dirname, "/client/build")));
-
 // app.get("*", (req, res) => {
 //   res.sendFile(path.join(__dirname + "/client/build/index.html"));
 //   });
 
-// Mongoose connection
 const db = mongoose.connection;
 
-//mongoose connect
 mongoose.connect(process.env.MONGODB_URI, {
   useUnifiedTopology: true,
   useNewUrlParser: true,
@@ -45,12 +35,10 @@ mongoose.connect(process.env.MONGODB_URI, {
   useCreateIndex: true,
 });
 
-// Check connection
 db.once("open", function () {
   console.log("Connected to MongoDB");
 });
 
-// Check for db errors
 db.on("error", function (err) {
   console.error(err);
 });

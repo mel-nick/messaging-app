@@ -12,7 +12,17 @@ import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { login } from "../../actions/auth";
 import { SocketContext } from "../../context";
-const SignInPage = ({ login, isAuthenticated, user }) => {
+import AlertToastr from "./AlertToastr";
+import { HIDE_ERROR_TOASTER } from "../../actions/types";
+import { v4 as uuidv4 } from "uuid";
+
+const SignInPage = ({
+  login,
+  isAuthenticated,
+  user,
+  errorMessage,
+  showErrorToastr,
+}) => {
   const { socket } = useContext(SocketContext);
   useEffect(() => socket && socket.close());
   const classes = useStyles();
@@ -90,6 +100,14 @@ const SignInPage = ({ login, isAuthenticated, user }) => {
           </Grid>
         </form>
       </div>
+      {errorMessage?.map(({ msg }) => (
+        <AlertToastr
+          key={uuidv4()}
+          open={showErrorToastr}
+          message={msg}
+          type={HIDE_ERROR_TOASTER}
+        />
+      ))}
     </Container>
   );
 };
@@ -97,6 +115,8 @@ const SignInPage = ({ login, isAuthenticated, user }) => {
 const mapStateToProps = ({ auth }) => ({
   isAuthenticated: auth?.isAuthenticated,
   user: auth?.user,
+  errorMessage: auth?.errorMessage,
+  showErrorToastr: auth?.showErrorToastr,
 });
 
 export default connect(mapStateToProps, { login })(SignInPage);
