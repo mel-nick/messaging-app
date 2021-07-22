@@ -1,11 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
+const auth = require("../middleware/auth");
 
 const Message = require("../dbmodels/Message");
 
 router.post(
   "/",
+  auth,
   [check("text", "Text message is required").not().isEmpty()],
   async (req, res) => {
     const errors = validationResult(req);
@@ -49,7 +51,7 @@ router.post(
   }
 );
 
-router.post("/history", async (req, res) => {
+router.post("/history", auth, async (req, res) => {
   const { from, to } = req.body;
   try {
     let thread = await Message.findOne({
