@@ -5,20 +5,26 @@ import {
   GET_MESSAGES,
   GET_MESSAGES_SUCCESS,
   GET_MESSAGES_ERROR,
+  GET_CHATS,
+  GET_CHATS_SUCCESS,
+  GET_CHATS_ERROR,
   SEND_MESSAGE,
   SEND_MESSAGE_SUCCESS,
   SEND_MESSAGE_ERROR,
   INIT_CONVERSATION,
   SET_ARRIVAL_MESSAGE,
   LOGOUT,
-} from "../actions/types";
-import { v4 as uuidv4 } from "uuid";
+} from '../actions/types';
+import { v4 as uuidv4 } from 'uuid';
 
 const initialState = {
   activeUsers: [],
   activeConversation: null,
+  activeChats: null,
   loadingMessages: false,
+  loadingChats: false,
   loadingMessagesError: null,
+  loadingChatsError: null,
   currentUser: null,
   sendingMessage: false,
 };
@@ -34,7 +40,7 @@ export default function (state = initialState, action) {
         activeUsers:
           [
             ...new Map(
-              [...state.activeUsers, payload].map((item) => [item["_id"], item])
+              [...state.activeUsers, payload].map((item) => [item['_id'], item])
             ).values(),
           ] || [],
       };
@@ -49,6 +55,18 @@ export default function (state = initialState, action) {
         activeConversation: payload,
         loadingMessages: false,
         loadingMessagesError: null,
+      };
+    case GET_CHATS:
+      return {
+        ...state,
+        loadingChats: true,
+      };
+    case GET_CHATS_SUCCESS:
+      return {
+        ...state,
+        activeChats: payload,
+        loadingChats: false,
+        loadingChatsError: null,
       };
     case INIT_CONVERSATION:
       return {
@@ -87,12 +105,19 @@ export default function (state = initialState, action) {
       return {
         ...state,
         sendingMessage: false,
-        loadingMessagesError: "cant send your message",
+        loadingMessagesError: 'cant send your message',
       };
     case GET_MESSAGES_ERROR:
       return {
         ...state,
         activeConversation: null,
+        loadingChats: false,
+        loadingChatsError: payload,
+      };
+    case GET_CHATS_ERROR:
+      return {
+        ...state,
+        activeChats: null,
         loadingMessages: false,
         loadingMessagesError: payload,
       };

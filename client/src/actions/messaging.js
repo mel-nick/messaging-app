@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 
 import {
   SET_MESSAGING_ACTIVE,
@@ -11,11 +11,14 @@ import {
   SEND_MESSAGE_ERROR,
   INIT_CONVERSATION,
   SET_ARRIVAL_MESSAGE,
-} from "./types";
+  GET_CHATS,
+  GET_CHATS_SUCCESS,
+  GET_CHATS_ERROR,
+} from './types';
 
 const config = {
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
 };
 
@@ -25,6 +28,25 @@ export const setActiveMessaging = (user) => (dispatch) => {
 
 export const setCurrentUser = (user) => (dispatch) => {
   dispatch({ type: SET_CURRENT_USER, payload: user });
+};
+export const getChats = (user) => async (dispatch) => {
+  dispatch({ type: GET_CHATS });
+
+  try {
+    const res = await axios.post(`/api/messages/chats`, { user }, config);
+    dispatch({
+      type: GET_CHATS_SUCCESS,
+      payload: res.data,
+    });
+  } catch (err) {
+    dispatch({
+      type: GET_CHATS_ERROR,
+      payload: {
+        msg: err?.response?.data,
+        status: err?.response?.status,
+      },
+    });
+  }
 };
 
 export const getMessages = (from, to) => async (dispatch) => {
@@ -59,7 +81,7 @@ export const sendMessage = (data) => async (dispatch) => {
     dispatch({
       type: SEND_MESSAGE_ERROR,
       payload: {
-        msg: "message have not been sent",
+        msg: 'message have not been sent',
       },
     });
   }
