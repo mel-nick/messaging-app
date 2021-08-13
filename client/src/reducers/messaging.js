@@ -14,13 +14,12 @@ import {
   INIT_CONVERSATION,
   SET_ARRIVAL_MESSAGE,
   LOGOUT,
-} from '../actions/types';
-import { v4 as uuidv4 } from 'uuid';
+} from "../actions/types";
+import { v4 as uuidv4 } from "uuid";
 
 const initialState = {
-  activeUsers: [],
   activeConversation: null,
-  activeChats: null,
+  activeChats: [],
   loadingMessages: false,
   loadingChats: false,
   loadingMessagesError: null,
@@ -37,10 +36,10 @@ export default function (state = initialState, action) {
       return {
         ...state,
         currentUser: payload,
-        activeUsers:
+        activeChats:
           [
             ...new Map(
-              [...state.activeUsers, payload].map((item) => [item['_id'], item])
+              [...state.activeChats, payload].map((item) => [item["_id"], item])
             ).values(),
           ] || [],
       };
@@ -81,6 +80,8 @@ export default function (state = initialState, action) {
       return {
         ...state,
         sendingMessage: true,
+        loadingMessagesError: null,
+        loadingChatsError: null,
       };
     case SEND_MESSAGE_SUCCESS:
     case SET_ARRIVAL_MESSAGE:
@@ -105,7 +106,7 @@ export default function (state = initialState, action) {
       return {
         ...state,
         sendingMessage: false,
-        loadingMessagesError: 'cant send your message',
+        loadingMessagesError: "cant send your message",
       };
     case GET_MESSAGES_ERROR:
       return {
@@ -117,7 +118,8 @@ export default function (state = initialState, action) {
     case GET_CHATS_ERROR:
       return {
         ...state,
-        activeChats: null,
+        // activeChats: null,
+        activeChats: [],
         loadingMessages: false,
         loadingMessagesError: payload,
       };
