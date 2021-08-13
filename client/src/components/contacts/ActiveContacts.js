@@ -1,7 +1,8 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import User from '../user/User';
-import { setCurrentUser } from '../../actions/messaging';
+// component is not used
+import React from "react";
+import { connect } from "react-redux";
+import User from "../user/User";
+import { setCurrentUser } from "../../actions/messaging";
 
 const ActiveContacts = ({ activeUsers, setCurrentUser, currentUser }) => {
   return (
