@@ -1,15 +1,19 @@
-import React, { Fragment } from "react";
-import { useStyles } from "./messengerStyles";
-import { connect } from "react-redux";
-import Typography from "@material-ui/core/Typography";
-import Avatar from "@material-ui/core/Avatar";
-import LogOutSwitch from "./LogOutSwitch";
-import Divider from "@material-ui/core/Divider";
-import InputBase from "@material-ui/core/InputBase";
-import SearchIcon from "@material-ui/icons/Search";
-import ClearIcon from "@material-ui/icons/Clear";
-import User from "../user/User";
-import { setActiveMessaging, getMessages } from "../../actions/messaging";
+import React, { Fragment } from 'react';
+import { useStyles } from './messengerStyles';
+import { connect } from 'react-redux';
+import Typography from '@material-ui/core/Typography';
+import Avatar from '@material-ui/core/Avatar';
+import LogOutSwitch from './LogOutSwitch';
+import Divider from '@material-ui/core/Divider';
+import InputBase from '@material-ui/core/InputBase';
+import SearchIcon from '@material-ui/icons/Search';
+import ClearIcon from '@material-ui/icons/Clear';
+import User from '../user/User';
+import {
+  setActiveMessaging,
+  getMessages,
+  addOnlineUserToActiveChats,
+} from '../../actions/messaging';
 
 const SidePanel = ({
   loggedUser,
@@ -18,6 +22,7 @@ const SidePanel = ({
   searchResults,
   setSearchData,
   setActiveMessaging,
+  addOnlineUserToActiveChats,
   currentUser,
   onlineUsers,
   activeChats,
@@ -26,7 +31,7 @@ const SidePanel = ({
 
   const handleSearchClear = () => {
     setSearchData([]);
-    setSearchString("");
+    setSearchString('');
   };
 
   const isUserOnline = (user, usersOnline) => {
@@ -46,8 +51,8 @@ const SidePanel = ({
           />
         </div>
         <div className={classes.userData}>
-          <Typography align="center" variant="h6">
-            {loggedUser?.firstName} {""} {loggedUser?.lastName}
+          <Typography align='center' variant='h6'>
+            {loggedUser?.firstName} {''} {loggedUser?.lastName}
           </Typography>
         </div>
         <div className={classes.search}>
@@ -59,12 +64,12 @@ const SidePanel = ({
             )}
           </div>
           <InputBase
-            placeholder="Search contacts…"
+            placeholder='Search contacts…'
             classes={{
               root: classes.inputRoot,
               input: classes.inputInput,
             }}
-            inputProps={{ "aria-label": "search" }}
+            inputProps={{ 'aria-label': 'search' }}
             value={searchString}
             onChange={(e) => {
               !e.target.value && handleSearchClear();
@@ -93,12 +98,14 @@ const SidePanel = ({
               .filter(({ _id }) => _id !== loggedUser?._id)
               .map((user) => (
                 <User
+                  online={isUserOnline(user, onlineUsers)}
                   key={user._id}
                   user={user}
                   onClickHandler={() => {
                     if (currentUser?._id !== user?._id) {
                       setActiveMessaging(user);
                     }
+                    addOnlineUserToActiveChats(user);
                     handleSearchClear();
                   }}
                 />
@@ -115,6 +122,8 @@ const mapStateToProps = ({ auth, messaging, onlineUsers }) => ({
   onlineUsers,
 });
 
-export default connect(mapStateToProps, { setActiveMessaging, getMessages })(
-  SidePanel
-);
+export default connect(mapStateToProps, {
+  setActiveMessaging,
+  addOnlineUserToActiveChats,
+  getMessages,
+})(SidePanel);

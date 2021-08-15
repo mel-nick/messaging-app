@@ -14,6 +14,7 @@ import {
   GET_CHATS,
   GET_CHATS_SUCCESS,
   GET_CHATS_ERROR,
+  ADD_ONLINE_USER_TO_ACTIVE_CHATS,
 } from './types';
 
 const config = {
@@ -68,6 +69,20 @@ export const getMessages = (from, to) => async (dispatch) => {
     });
   }
 };
+// here
+export const addOnlineUserToActiveChats =
+  (currentUser) => (dispatch, getState) => {
+    const onlineUsers = getState().onlineUsers;
+    // eslint-disable-next-line array-callback-return
+    onlineUsers?.map((onlineUser) => {
+      if (onlineUser?._id === currentUser?._id) {
+        return dispatch({
+          type: ADD_ONLINE_USER_TO_ACTIVE_CHATS,
+          payload: onlineUser,
+        });
+      }
+    });
+  };
 
 export const sendMessage = (data) => async (dispatch) => {
   dispatch({ type: SEND_MESSAGE });
