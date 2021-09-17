@@ -1,5 +1,5 @@
 /* eslint-disable import/no-anonymous-default-export */
-import { GET_ONLINE_USERS } from "../actions/types";
+import { GET_ONLINE_USERS } from '../actions/types';
 
 const initialState = [];
 
@@ -8,7 +8,7 @@ export default function (state = initialState, action) {
 
   switch (type) {
     case GET_ONLINE_USERS:
-      return [...payload];
+      return payload;
     default:
       return state;
   }

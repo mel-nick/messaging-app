@@ -1,18 +1,19 @@
-import React, { useState, useEffect, useCallback, useContext } from "react";
-import { connect } from "react-redux";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Drawer from "@material-ui/core/Drawer";
-import Hidden from "@material-ui/core/Hidden";
-import { useTheme } from "@material-ui/core/styles";
-import axios from "axios";
-import Bar from "./Bar";
-import { useStyles } from "./messengerStyles";
-import SidePanel from "./SidePanel";
-import Footer from "./Footer";
-import Thread from "../messageThread/Thread";
-import { setArrivalMessage, getChats } from "../../actions/messaging";
-import { getOnlineUsers } from "../../actions/users";
-import { SocketContext } from "../../context";
+// /* eslint-disable react-hooks/exhaustive-deps */
+import React, { useState, useEffect, useCallback, useContext } from 'react';
+import { connect } from 'react-redux';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Drawer from '@material-ui/core/Drawer';
+import Hidden from '@material-ui/core/Hidden';
+import { useTheme } from '@material-ui/core/styles';
+import axios from 'axios';
+import Bar from './Bar';
+import { useStyles } from './messengerStyles';
+import SidePanel from './SidePanel';
+import Footer from './Footer';
+import Thread from '../messageThread/Thread';
+import { setArrivalMessage, getChats } from '../../actions/messaging';
+import { getOnlineUsers } from '../../actions/users';
+import { SocketContext } from '../../context';
 
 const Messenger = ({
   window,
@@ -20,6 +21,7 @@ const Messenger = ({
   setArrivalMessage,
   getOnlineUsers,
   getChats,
+  currentUser,
 }) => {
   const { socket } = useContext(SocketContext);
 
@@ -28,8 +30,10 @@ const Messenger = ({
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [data, setData] = useState([]);
-  const [searchString, setSearchString] = useState("");
+  const [searchString, setSearchString] = useState('');
   const [typing, setTyping] = useState(false);
+  const [isProperWindow, setIsProperWindow] = useState(false);
+  const [message, setMessage] = useState('');
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -48,28 +52,40 @@ const Messenger = ({
   useEffect(() => {
     if (socket && loggedInUser) {
       socket.connect();
-      socket.emit("setUserOnline", loggedInUser);
-      socket.on("getOnlineUsers", (users) => getOnlineUsers(users));
-      socket.on(
-        "getMessage",
-        (message) =>
-          loggedInUser?._id === message?.to && setArrivalMessage(message)
-      );
-      socket.on(
-        "isTyping",
-        (to) => loggedInUser?._id === to && setTyping(true)
-      );
-      socket.on(
-        "notTyping",
-        (to) => loggedInUser?._id === to && setTyping(false)
-      );
+      socket.emit('setUserOnline', loggedInUser);
+      socket.on('getOnlineUsers', (users) => getOnlineUsers(users));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loggedInUser, socket]);
 
   useEffect(() => {
+    if (socket) {
+      socket.on('getMessage', (text) => {
+        if (currentUser && currentUser._id === text.from) {
+          setIsProperWindow(true);
+          setMessage(text);
+        }
+        setIsProperWindow(false);
+      });
+      socket.on('isTyping', ({ from, to }) => {
+        if (loggedInUser?._id === to && currentUser?._id === from) {
+          setTyping(true);
+        } else setTyping(false);
+      });
+      socket.on(
+        'notTyping',
+        ({ from, to }) =>
+          loggedInUser?._id === to &&
+          currentUser?._id === from &&
+          setTyping(false)
+      );
+    }
+  }, [socket, currentUser, loggedInUser]);
+  useEffect(() => {
+    isProperWindow && setArrivalMessage(message);
+  }, [isProperWindow]);
+
+  useEffect(() => {
     loggedInUser && getChats(loggedInUser?._id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loggedInUser]);
 
   const container =
@@ -79,12 +95,12 @@ const Messenger = ({
     <div className={classes.root}>
       <CssBaseline />
       <Bar classes={classes} handleDrawerToggle={handleDrawerToggle} />
-      <nav className={classes.drawer} aria-label="mailbox folders">
-        <Hidden smUp implementation="css">
+      <nav className={classes.drawer} aria-label='mailbox folders'>
+        <Hidden smUp implementation='css'>
           <Drawer
             container={container}
-            variant="temporary"
-            anchor={theme.direction === "rtl" ? "right" : "left"}
+            variant='temporary'
+            anchor={theme.direction === 'rtl' ? 'right' : 'left'}
             open={mobileOpen}
             onClose={handleDrawerToggle}
             classes={{
@@ -102,12 +118,12 @@ const Messenger = ({
             />
           </Drawer>
         </Hidden>
-        <Hidden xsDown implementation="css">
+        <Hidden xsDown implementation='css'>
           <Drawer
             classes={{
               paper: classes.drawerPaper,
             }}
-            variant="permanent"
+            variant='permanent'
             open
           >
             <SidePanel
@@ -128,8 +144,9 @@ const Messenger = ({
   );
 };
 
-const mapStateToProps = ({ auth }) => ({
+const mapStateToProps = ({ auth, messaging }) => ({
   loggedInUser: auth?.user,
+  currentUser: messaging?.currentUser,
 });
 
 export default connect(mapStateToProps, {
