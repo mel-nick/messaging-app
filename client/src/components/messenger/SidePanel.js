@@ -90,6 +90,7 @@ const SidePanel = ({
                   if (currentUser?._id !== user?._id) {
                     setActiveMessaging(user);
                   }
+                  addOnlineUserToActiveChats(user);
                   handleSearchClear();
                 }}
               />

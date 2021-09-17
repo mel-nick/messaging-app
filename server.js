@@ -46,7 +46,7 @@ db.on('error', function (err) {
 let onlineUsers = [];
 
 const setUserOnline = (user, socketId) => {
-  !onlineUsers.some((user) => user.userId === user._id) &&
+  !onlineUsers.some((onlineUser) => onlineUser._id === user._id) &&
     onlineUsers.push({ ...user, socketId });
 };
 
@@ -73,13 +73,13 @@ io.on('connection', (socket) => {
       });
   });
 
-  socket.on('typingMessageStart', (to) => {
+  socket.on('typingMessageStart', ({ from, to }) => {
     const user = getuser(to);
-    user && io.to(user.socketId).emit('isTyping', to);
+    user && io.to(user.socketId).emit('isTyping', { from, to });
   });
-  socket.on('typingMessageEnd', (to) => {
+  socket.on('typingMessageEnd', ({ from, to }) => {
     const user = getuser(to);
-    user && io.to(user.socketId).emit('notTyping', to);
+    user && io.to(user.socketId).emit('notTyping', { from, to });
   });
 
   socket.on('disconnect', () => {
