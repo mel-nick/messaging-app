@@ -10,7 +10,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import ClearIcon from '@material-ui/icons/Clear';
 import User from '../user/User';
 import {
-  setActiveMessaging,
+  setCurrentUser,
   getMessages,
   addOnlineUserToActiveChats,
 } from '../../actions/messaging';
@@ -21,7 +21,7 @@ const SidePanel = ({
   setSearchString,
   searchResults,
   setSearchData,
-  setActiveMessaging,
+  setCurrentUser,
   addOnlineUserToActiveChats,
   currentUser,
   onlineUsers,
@@ -88,7 +88,7 @@ const SidePanel = ({
                 user={user}
                 onClickHandler={() => {
                   if (currentUser?._id !== user?._id) {
-                    setActiveMessaging(user);
+                    setCurrentUser(user);
                   }
                   addOnlineUserToActiveChats(user);
                   handleSearchClear();
@@ -104,7 +104,7 @@ const SidePanel = ({
                   user={user}
                   onClickHandler={() => {
                     if (currentUser?._id !== user?._id) {
-                      setActiveMessaging(user);
+                      setCurrentUser(user);
                     }
                     addOnlineUserToActiveChats(user);
                     handleSearchClear();
@@ -124,7 +124,7 @@ const mapStateToProps = ({ auth, messaging, onlineUsers }) => ({
 });
 
 export default connect(mapStateToProps, {
-  setActiveMessaging,
+  setCurrentUser,
   addOnlineUserToActiveChats,
   getMessages,
 })(SidePanel);

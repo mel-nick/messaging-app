@@ -1,6 +1,5 @@
 /* eslint-disable import/no-anonymous-default-export */
 import {
-  SET_MESSAGING_ACTIVE,
   SET_CURRENT_USER,
   GET_MESSAGES,
   GET_MESSAGES_SUCCESS,
@@ -33,11 +32,9 @@ export default function (state = initialState, action) {
   const { type, payload } = action;
 
   switch (type) {
-    case SET_MESSAGING_ACTIVE:
     case ADD_ONLINE_USER_TO_ACTIVE_CHATS:
       return {
         ...state,
-        currentUser: payload,
         activeChats:
           [
             ...new Map(
@@ -120,7 +117,6 @@ export default function (state = initialState, action) {
     case GET_CHATS_ERROR:
       return {
         ...state,
-        // activeChats: null,
         activeChats: [],
         loadingMessages: false,
         loadingMessagesError: payload,
