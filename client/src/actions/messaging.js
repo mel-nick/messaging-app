@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 import {
-  SET_MESSAGING_ACTIVE,
   SET_CURRENT_USER,
   SEND_MESSAGE,
   GET_MESSAGES,
@@ -21,10 +20,6 @@ const config = {
   headers: {
     'Content-Type': 'application/json',
   },
-};
-
-export const setActiveMessaging = (user) => (dispatch) => {
-  dispatch({ type: SET_MESSAGING_ACTIVE, payload: user });
 };
 
 export const setCurrentUser = (user) => (dispatch) => {

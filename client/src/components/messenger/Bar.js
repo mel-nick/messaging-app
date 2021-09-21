@@ -38,8 +38,8 @@ const Bar = ({ classes, handleDrawerToggle, currentUser }) => {
   );
 };
 
-const mapDispatchToProps = ({ messaging }) => ({
+const mapStateToProps = ({ messaging }) => ({
   currentUser: messaging?.currentUser,
 });
 
-export default connect(mapDispatchToProps, null)(Bar);
+export default connect(mapStateToProps, null)(Bar);

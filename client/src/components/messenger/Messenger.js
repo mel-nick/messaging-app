@@ -1,4 +1,4 @@
-// /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { connect } from 'react-redux';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -32,8 +32,7 @@ const Messenger = ({
   const [data, setData] = useState([]);
   const [searchString, setSearchString] = useState('');
   const [typing, setTyping] = useState(false);
-  const [isProperWindow, setIsProperWindow] = useState(false);
-  const [message, setMessage] = useState('');
+  const [incomingMessage, setIncomingMessage] = useState(null);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -55,22 +54,25 @@ const Messenger = ({
       socket.emit('setUserOnline', loggedInUser);
       socket.on('getOnlineUsers', (users) => getOnlineUsers(users));
     }
-  }, [loggedInUser, socket]);
 
-  useEffect(() => {
     if (socket) {
-      socket.on('getMessage', (text) => {
-        if (currentUser && currentUser._id === text.from) {
-          setIsProperWindow(true);
-          setMessage(text);
-        }
-        setIsProperWindow(false);
-      });
+      const onGetMessage = (message) => setIncomingMessage(message);
+      socket.on('getMessage', onGetMessage);
+
+      if (
+        currentUser &&
+        incomingMessage &&
+        currentUser._id === incomingMessage?.from
+      ) {
+        setArrivalMessage(incomingMessage);
+      }
+
       socket.on('isTyping', ({ from, to }) => {
-        if (loggedInUser?._id === to && currentUser?._id === from) {
-          setTyping(true);
-        } else setTyping(false);
+        loggedInUser?._id === to && currentUser?._id === from
+          ? setTyping(true)
+          : setTyping(false);
       });
+
       socket.on(
         'notTyping',
         ({ from, to }) =>
@@ -79,10 +81,7 @@ const Messenger = ({
           setTyping(false)
       );
     }
-  }, [socket, currentUser, loggedInUser]);
-  useEffect(() => {
-    isProperWindow && setArrivalMessage(message);
-  }, [isProperWindow]);
+  }, [loggedInUser, currentUser, incomingMessage, socket]);
 
   useEffect(() => {
     loggedInUser && getChats(loggedInUser?._id);
