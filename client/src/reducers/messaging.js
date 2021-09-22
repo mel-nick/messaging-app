@@ -32,9 +32,11 @@ export default function (state = initialState, action) {
   const { type, payload } = action;
 
   switch (type) {
+    case SET_CURRENT_USER:
     case ADD_ONLINE_USER_TO_ACTIVE_CHATS:
       return {
         ...state,
+        currentUser: payload,
         activeChats:
           [
             ...new Map(
@@ -120,11 +122,6 @@ export default function (state = initialState, action) {
         activeChats: [],
         loadingMessages: false,
         loadingMessagesError: payload,
-      };
-    case SET_CURRENT_USER:
-      return {
-        ...state,
-        currentUser: payload,
       };
     case LOGOUT:
       return initialState;
