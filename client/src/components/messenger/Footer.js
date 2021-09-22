@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useContext } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import { useStyles } from './footerStyles';
 import Button from '@material-ui/core/Button';
 import SendIcon from '@material-ui/icons/Send';
@@ -15,23 +15,23 @@ const Footer = ({ currentUser, loggedUser, sendMessage }) => {
   let textInput = useRef(null);
 
   const [text, setText] = useState({ text: '' });
-  const [timeOfLastKeyPress, setTimeOfLastKeyPress] = useState(0);
-  const [typing, setTyping] = useState(false);
+  // const [timeOfLastKeyPress, setTimeOfLastKeyPress] = useState(0);
+  // const [typing, setTyping] = useState(false);
 
-  const checkInterval = () => {
-    if (Date.now() - timeOfLastKeyPress > 3000) {
-      setTyping(false);
-    }
-  };
+  // const checkInterval = () => {
+  //   if (Date.now() - timeOfLastKeyPress > 3000) {
+  //     setTyping(false);
+  //   }
+  // };
 
-  useEffect(() => {
-    socket &&
-      !typing &&
-      socket.emit('typingMessageEnd', {
-        from: loggedUser?._id,
-        to: currentUser?._id,
-      });
-  }, [currentUser, typing, socket, loggedUser]);
+  // useEffect(() => {
+  //   socket &&
+  //     !typing &&
+  //     socket.emit('typingMessageEnd', {
+  //       from: loggedUser?._id,
+  //       to: currentUser?._id,
+  //     });
+  // }, [currentUser, typing, socket, loggedUser]);
 
   const handleInputChange = (e) => setText({ text: e.target.value });
 
@@ -47,20 +47,25 @@ const Footer = ({ currentUser, loggedUser, sendMessage }) => {
     textInput.current.value = '';
   };
 
-  const timeOfFirstKeyPress = Date.now();
+  // const timeOfFirstKeyPress = Date.now();
+  // const handleKeyPress = () => {
+  //   const lastKeyPressTime = Date.now();
+  //   if (lastKeyPressTime - timeOfFirstKeyPress < 3000) {
+  //     setTyping(true);
+  //     socket.emit('typingMessageStart', {
+  //       from: loggedUser?._id,
+  //       to: currentUser?._id,
+  //     });
+  //     setTimeOfLastKeyPress(lastKeyPressTime);
+  //   }
+  //   setTimeout(checkInterval, 1000);
+  // };
   const handleKeyPress = () => {
-    const lastKeyPressTime = Date.now();
-    if (lastKeyPressTime - timeOfFirstKeyPress < 3000) {
-      setTyping(true);
-      socket.emit('typingMessageStart', {
-        from: loggedUser?._id,
-        to: currentUser?._id,
-      });
-      setTimeOfLastKeyPress(lastKeyPressTime);
-    }
-    setTimeout(checkInterval, 5000);
+    socket?.emit('typingMessageStart', {
+      from: loggedUser?._id,
+      to: currentUser?._id,
+    });
   };
-
   return (
     currentUser && (
       <footer className={[classes.footer]}>

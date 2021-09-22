@@ -33,7 +33,13 @@ const Messenger = ({
   const [searchString, setSearchString] = useState('');
   const [typing, setTyping] = useState(false);
   const [incomingMessage, setIncomingMessage] = useState(null);
+  // const [timeOfLastKeyPress, setTimeOfLastKeyPress] = useState(0);
 
+  // const checkInterval = () => {
+  //   if (Date.now() - timeOfLastKeyPress > 3000) {
+  //     setTyping(false);
+  //   }
+  // };
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -73,15 +79,29 @@ const Messenger = ({
           : setTyping(false);
       });
 
-      socket.on(
-        'notTyping',
-        ({ from, to }) =>
-          loggedInUser?._id === to &&
-          currentUser?._id === from &&
-          setTyping(false)
-      );
+      // socket.on(
+      //   'notTyping',
+      //   ({ from, to }) =>
+      //     loggedInUser?._id === to &&
+      //     currentUser?._id === from &&
+      //     setTyping(false)
+      // );
     }
   }, [loggedInUser, currentUser, incomingMessage, socket]);
+
+  // const timeOfFirstKeyPress = Date.now();
+  // const handleKeyPress = () => {
+  //   const lastKeyPressTime = Date.now();
+  //   if (lastKeyPressTime - timeOfFirstKeyPress < 3000) {
+  //     setTyping(true);
+  //     socket.emit('typingMessageStart', {
+  //       from: loggedInUser?._id,
+  //       to: currentUser?._id,
+  //     });
+  //     setTimeOfLastKeyPress(lastKeyPressTime);
+  //   }
+  //   setTimeout(checkInterval, 1000);
+  // };
 
   useEffect(() => {
     loggedInUser && getChats(loggedInUser?._id);
