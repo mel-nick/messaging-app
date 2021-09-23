@@ -1,11 +1,11 @@
-import React, { useState, useRef, useContext } from 'react';
-import { useStyles } from './footerStyles';
-import Button from '@material-ui/core/Button';
-import SendIcon from '@material-ui/icons/Send';
-import TextField from '@material-ui/core/TextField';
-import { connect } from 'react-redux';
-import { sendMessage } from '../../actions/messaging';
-import { SocketContext } from '../../context';
+import React, { useState, useRef, useContext } from "react";
+import { useStyles } from "./footerStyles";
+import Button from "@material-ui/core/Button";
+import SendIcon from "@material-ui/icons/Send";
+import TextField from "@material-ui/core/TextField";
+import { connect } from "react-redux";
+import { sendMessage } from "../../actions/messaging";
+import { SocketContext } from "../../context";
 
 const Footer = ({ currentUser, loggedUser, sendMessage }) => {
   const { socket } = useContext(SocketContext);
@@ -14,83 +14,64 @@ const Footer = ({ currentUser, loggedUser, sendMessage }) => {
 
   let textInput = useRef(null);
 
-  const [text, setText] = useState({ text: '' });
-  // const [timeOfLastKeyPress, setTimeOfLastKeyPress] = useState(0);
-  // const [typing, setTyping] = useState(false);
-
-  // const checkInterval = () => {
-  //   if (Date.now() - timeOfLastKeyPress > 3000) {
-  //     setTyping(false);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   socket &&
-  //     !typing &&
-  //     socket.emit('typingMessageEnd', {
-  //       from: loggedUser?._id,
-  //       to: currentUser?._id,
-  //     });
-  // }, [currentUser, typing, socket, loggedUser]);
-
+  const [text, setText] = useState({ text: "" });
   const handleInputChange = (e) => setText({ text: e.target.value });
 
   const handleSendMessage = (e) => {
     e.preventDefault();
     sendMessage({ ...text, from: loggedUser?._id, to: currentUser?._id });
 
-    socket.emit('sendMessage', {
+    socket.emit("sendMessage", {
       ...text,
       from: loggedUser?._id,
       to: currentUser?._id,
     });
-    textInput.current.value = '';
-  };
 
-  // const timeOfFirstKeyPress = Date.now();
-  // const handleKeyPress = () => {
-  //   const lastKeyPressTime = Date.now();
-  //   if (lastKeyPressTime - timeOfFirstKeyPress < 3000) {
-  //     setTyping(true);
-  //     socket.emit('typingMessageStart', {
-  //       from: loggedUser?._id,
-  //       to: currentUser?._id,
-  //     });
-  //     setTimeOfLastKeyPress(lastKeyPressTime);
-  //   }
-  //   setTimeout(checkInterval, 1000);
-  // };
-  const handleKeyPress = () => {
-    socket?.emit('typingMessageStart', {
+    socket.emit("typingMessageEnd", {
       from: loggedUser?._id,
       to: currentUser?._id,
     });
+
+    textInput.current.value = null;
+    setText({ text: "" });
   };
+
+  const handleKeyPress = () => {
+    if (!!textInput.current.value) {
+      socket.emit("typingMessageStart", {
+        from: loggedUser?._id,
+        to: currentUser?._id,
+      });
+    }
+  };
+
   return (
     currentUser && (
       <footer className={[classes.footer]}>
         <form
           className={classes.inputRoot}
           noValidate
-          autoComplete='off'
+          autoComplete="off"
           onSubmit={handleSendMessage}
           onKeyUp={handleKeyPress}
         >
           <TextField
-            id='outlined-basic'
-            label='Write your message'
-            variant='outlined'
+            id="outlined-basic"
+            label="Write your message"
+            variant="outlined"
             onChange={handleInputChange}
             fullWidth
             inputRef={textInput}
           />
         </form>
         <Button
-          variant='contained'
-          color='primary'
+          inputref={textInput}
+          variant="contained"
+          color="primary"
           className={classes.button}
           endIcon={<SendIcon>send</SendIcon>}
           onClick={handleSendMessage}
+          disabled={!textInput?.current?.value}
         >
           Send
         </Button>
