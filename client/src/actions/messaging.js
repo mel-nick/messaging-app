@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 
 import {
   SET_CURRENT_USER,
@@ -14,11 +14,11 @@ import {
   GET_CHATS_SUCCESS,
   GET_CHATS_ERROR,
   ADD_ONLINE_USER_TO_ACTIVE_CHATS,
-} from './types';
+} from "./types";
 
 const config = {
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 };
 
@@ -64,7 +64,7 @@ export const getMessages = (from, to) => async (dispatch) => {
     });
   }
 };
-// here
+
 export const addOnlineUserToActiveChats =
   (currentUser) => (dispatch, getState) => {
     const onlineUsers = getState().onlineUsers;
@@ -91,7 +91,7 @@ export const sendMessage = (data) => async (dispatch) => {
     dispatch({
       type: SEND_MESSAGE_ERROR,
       payload: {
-        msg: 'message have not been sent',
+        msg: "message have not been sent",
       },
     });
   }

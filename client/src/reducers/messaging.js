@@ -14,8 +14,8 @@ import {
   SET_ARRIVAL_MESSAGE,
   LOGOUT,
   ADD_ONLINE_USER_TO_ACTIVE_CHATS,
-} from '../actions/types';
-import { v4 as uuidv4 } from 'uuid';
+} from "../actions/types";
+import { v4 as uuidv4 } from "uuid";
 
 const initialState = {
   activeConversation: null,
@@ -40,7 +40,7 @@ export default function (state = initialState, action) {
         activeChats:
           [
             ...new Map(
-              [...state.activeChats, payload].map((item) => [item['_id'], item])
+              [...state.activeChats, payload].map((item) => [item["_id"], item])
             ).values(),
           ] || [],
       };
@@ -107,7 +107,7 @@ export default function (state = initialState, action) {
       return {
         ...state,
         sendingMessage: false,
-        loadingMessagesError: 'cant send your message',
+        loadingMessagesError: "cant send your message",
       };
     case GET_MESSAGES_ERROR:
       return {
