@@ -14,18 +14,19 @@ const Footer = ({ currentUser, loggedUser, sendMessage }) => {
 
   let textInput = useRef(null);
 
-  const [text, setText] = useState({ text: "" });
+  const [text, setText] = useState(null);
   const handleInputChange = (e) => setText({ text: e.target.value });
 
   const handleSendMessage = (e) => {
     e.preventDefault();
-    sendMessage({ ...text, from: loggedUser?._id, to: currentUser?._id });
-
-    socket.emit("sendMessage", {
-      ...text,
-      from: loggedUser?._id,
-      to: currentUser?._id,
-    });
+    if (text) {
+      sendMessage({ ...text, from: loggedUser?._id, to: currentUser?._id });
+      socket.emit("sendMessage", {
+        ...text,
+        from: loggedUser?._id,
+        to: currentUser?._id,
+      });
+    }
 
     socket.emit("typingMessageEnd", {
       from: loggedUser?._id,
@@ -33,7 +34,7 @@ const Footer = ({ currentUser, loggedUser, sendMessage }) => {
     });
 
     textInput.current.value = null;
-    setText({ text: "" });
+    setText(null);
   };
 
   const handleKeyPress = () => {
