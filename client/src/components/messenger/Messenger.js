@@ -1,23 +1,23 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect, useCallback, useContext } from "react";
-import { connect } from "react-redux";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Drawer from "@material-ui/core/Drawer";
-import Hidden from "@material-ui/core/Hidden";
-import { useTheme } from "@material-ui/core/styles";
-import axios from "axios";
-import Bar from "./Bar";
-import { useStyles } from "./messengerStyles";
-import SidePanel from "./SidePanel";
-import Footer from "./Footer";
-import Thread from "../messageThread/Thread";
+import React, { useState, useEffect, useCallback, useContext } from 'react';
+import { connect } from 'react-redux';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Drawer from '@material-ui/core/Drawer';
+import Hidden from '@material-ui/core/Hidden';
+import { useTheme } from '@material-ui/core/styles';
+import axios from 'axios';
+import Bar from './Bar';
+import { useStyles } from './messengerStyles';
+import SidePanel from './SidePanel';
+import Footer from './Footer';
+import Thread from '../messageThread/Thread';
 import {
   setArrivalMessage,
   getChats,
   setCurrentUser,
-} from "../../actions/messaging";
-import { getOnlineUsers } from "../../actions/users";
-import { SocketContext } from "../../context";
+} from '../../actions/messaging';
+import { getOnlineUsers } from '../../actions/users';
+import { SocketContext } from '../../context';
 
 const Messenger = ({
   window,
@@ -36,7 +36,7 @@ const Messenger = ({
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [data, setData] = useState([]);
-  const [searchString, setSearchString] = useState("");
+  const [searchString, setSearchString] = useState('');
   const [typing, setTyping] = useState(false);
   const [incomingMessage, setIncomingMessage] = useState(null);
 
@@ -57,13 +57,13 @@ const Messenger = ({
   useEffect(() => {
     if (socket && loggedInUser) {
       socket.connect();
-      socket.emit("setUserOnline", loggedInUser);
-      socket.on("getOnlineUsers", (users) => getOnlineUsers(users));
+      socket.emit('setUserOnline', loggedInUser);
+      socket.on('getOnlineUsers', (users) => getOnlineUsers(users));
     }
 
     if (socket) {
       const onGetMessage = (message) => setIncomingMessage(message);
-      socket.on("getMessage", onGetMessage);
+      socket.on('getMessage', onGetMessage);
 
       if (
         currentUser &&
@@ -73,14 +73,14 @@ const Messenger = ({
         setArrivalMessage(incomingMessage);
       }
 
-      socket.once("isTyping", ({ from, to }) => {
+      socket.once('isTyping', ({ from, to }) => {
         loggedInUser?._id === to && currentUser?._id === from
           ? setTyping(true)
           : setTyping(false);
       });
 
       socket.once(
-        "notTyping",
+        'notTyping',
         ({ from, to }) =>
           loggedInUser?._id === to &&
           currentUser?._id === from &&
@@ -106,12 +106,12 @@ const Messenger = ({
     <div className={classes.root}>
       <CssBaseline />
       <Bar classes={classes} handleDrawerToggle={handleDrawerToggle} />
-      <nav className={classes.drawer} aria-label="mailbox folders">
-        <Hidden smUp implementation="css">
+      <nav className={classes.drawer} aria-label='mailbox folders'>
+        <Hidden smUp implementation='css'>
           <Drawer
             container={container}
-            variant="temporary"
-            anchor={theme.direction === "rtl" ? "right" : "left"}
+            variant='temporary'
+            anchor={theme.direction === 'rtl' ? 'right' : 'left'}
             open={mobileOpen}
             onClose={handleDrawerToggle}
             classes={{
@@ -126,15 +126,16 @@ const Messenger = ({
               searchResults={data}
               setSearchData={setData}
               searchString={searchString}
+              handleDrawerToggle={handleDrawerToggle}
             />
           </Drawer>
         </Hidden>
-        <Hidden xsDown implementation="css">
+        <Hidden xsDown implementation='css'>
           <Drawer
             classes={{
               paper: classes.drawerPaper,
             }}
-            variant="permanent"
+            variant='permanent'
             open
           >
             <SidePanel
