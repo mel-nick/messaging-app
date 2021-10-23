@@ -62,9 +62,10 @@ const Messenger = ({
     }
 
     if (socket) {
-      const onGetMessage = (message) => setIncomingMessage(message);
+      const onGetMessage = (message) => {
+        setIncomingMessage(message);
+      };
       socket.on('getMessage', onGetMessage);
-
       if (
         currentUser &&
         incomingMessage &&
