@@ -1,11 +1,12 @@
-import React, { useState, useRef, useContext } from "react";
-import { useStyles } from "./footerStyles";
-import Button from "@material-ui/core/Button";
-import SendIcon from "@material-ui/icons/Send";
-import TextField from "@material-ui/core/TextField";
-import { connect } from "react-redux";
-import { sendMessage } from "../../actions/messaging";
-import { SocketContext } from "../../context";
+import React, { useState, useRef, useContext } from 'react';
+import { useStyles } from './footerStyles';
+import Button from '@material-ui/core/Button';
+import SendIcon from '@material-ui/icons/Send';
+import TextField from '@material-ui/core/TextField';
+import { connect } from 'react-redux';
+import { sendMessage } from '../../actions/messaging';
+import { SocketContext } from '../../context';
+import { encrypter } from '../../utils/cryptoUtil';
 
 const Footer = ({ currentUser, loggedUser, sendMessage }) => {
   const { socket } = useContext(SocketContext);
@@ -15,20 +16,21 @@ const Footer = ({ currentUser, loggedUser, sendMessage }) => {
   let textInput = useRef(null);
 
   const [text, setText] = useState(null);
-  const handleInputChange = (e) => setText({ text: e.target.value });
+
+  const handleInputChange = (e) => setText({ text: encrypter(e.target.value) });
 
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (text) {
       sendMessage({ ...text, from: loggedUser?._id, to: currentUser?._id });
-      socket.emit("sendMessage", {
+      socket.emit('sendMessage', {
         ...text,
         from: loggedUser?._id,
         to: currentUser?._id,
       });
     }
 
-    socket.emit("typingMessageEnd", {
+    socket.emit('typingMessageEnd', {
       from: loggedUser?._id,
       to: currentUser?._id,
     });
@@ -39,7 +41,7 @@ const Footer = ({ currentUser, loggedUser, sendMessage }) => {
 
   const handleKeyPress = () => {
     if (!!textInput.current.value) {
-      socket.emit("typingMessageStart", {
+      socket.emit('typingMessageStart', {
         from: loggedUser?._id,
         to: currentUser?._id,
       });
@@ -52,14 +54,14 @@ const Footer = ({ currentUser, loggedUser, sendMessage }) => {
         <form
           className={classes.inputRoot}
           noValidate
-          autoComplete="off"
+          autoComplete='off'
           onSubmit={handleSendMessage}
           onKeyUp={handleKeyPress}
         >
           <TextField
-            id="outlined-basic"
-            label="Write your message"
-            variant="outlined"
+            id='outlined-basic'
+            label='Write your message'
+            variant='outlined'
             onChange={handleInputChange}
             fullWidth
             inputRef={textInput}
@@ -67,8 +69,8 @@ const Footer = ({ currentUser, loggedUser, sendMessage }) => {
         </form>
         <Button
           inputref={textInput}
-          variant="contained"
-          color="primary"
+          variant='contained'
+          color='primary'
           className={classes.button}
           endIcon={<SendIcon>send</SendIcon>}
           onClick={handleSendMessage}
