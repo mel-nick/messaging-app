@@ -8,7 +8,7 @@ import { sendMessage } from '../../actions/messaging';
 import { SocketContext } from '../../context';
 import { encrypter } from '../../utils/cryptoUtil';
 
-const Footer = ({ currentUser, loggedUser, sendMessage }) => {
+const Footer = ({ currentUser, loggedUser, sendMessage, secret }) => {
   const { socket } = useContext(SocketContext);
 
   const classes = useStyles();
@@ -17,7 +17,8 @@ const Footer = ({ currentUser, loggedUser, sendMessage }) => {
 
   const [text, setText] = useState(null);
 
-  const handleInputChange = (e) => setText({ text: encrypter(e.target.value) });
+  const handleInputChange = (e) =>
+    setText({ text: encrypter(e.target.value, secret) });
 
   const handleSendMessage = (e) => {
     e.preventDefault();
@@ -86,6 +87,7 @@ const Footer = ({ currentUser, loggedUser, sendMessage }) => {
 const mapStateToProps = ({ messaging, auth }) => ({
   currentUser: messaging?.currentUser,
   loggedUser: auth?.user,
+  secret: auth?._crToken,
 });
 
 export default connect(mapStateToProps, { sendMessage })(Footer);

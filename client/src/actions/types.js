@@ -4,7 +4,6 @@ export const AUTH_ERROR = 'AUTH_ERROR';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_FAIL = 'LOGIN_FAIL';
 export const LOGOUT = 'LOGOUT';
-//
 export const CLEAR_PROFILE = 'CLEAR_PROFILE';
 export const USER_LOADED = 'USER_LOADED';
 export const SET_ALERT = 'SET_ALERT';
@@ -30,3 +29,5 @@ export const GET_CHATS_SUCCESS = 'GET_CHATS_SUCCESS';
 export const GET_CHATS_ERROR = 'GET_CHATS_ERROR';
 export const ADD_ONLINE_USER_TO_ACTIVE_CHATS =
   'ADD_ONLINE_USER_TO_ACTIVE_CHATS';
+export const GET_CR_TOKEN = 'GET_CR_TOKEN';
+export const SET_CR_TOKEN = 'SET_CR_TOKEN';
