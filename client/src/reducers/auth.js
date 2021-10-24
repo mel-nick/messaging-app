@@ -9,15 +9,17 @@ import {
   LOGOUT,
   HIDE_ERROR_TOASTER,
   SHOW_ERROR_TOASTER,
-} from "../actions/types";
+  SET_CR_TOKEN,
+} from '../actions/types';
 
 const initialState = {
-  token: localStorage.getItem("token"),
+  token: localStorage.getItem('token'),
   isAuthenticated: null,
   loading: true,
   user: null,
   errorMessage: null,
   showErrorToastr: false,
+  _crToken: null,
 };
 
 export default function (state = initialState, action) {
@@ -32,10 +34,14 @@ export default function (state = initialState, action) {
         loading: false,
         errorMessage: null,
       };
-
+    case SET_CR_TOKEN:
+      return {
+        ...state,
+        ...payload,
+      };
     case REGISTER_SUCCESS:
     case LOGIN_SUCCESS:
-      localStorage.setItem("token", payload.token);
+      localStorage.setItem('token', payload.token);
       return {
         ...state,
         ...payload,
@@ -45,7 +51,7 @@ export default function (state = initialState, action) {
       };
     case REGISTER_FAIL:
     case LOGIN_FAIL:
-      localStorage.removeItem("token");
+      localStorage.removeItem('token');
       return {
         ...state,
         token: null,
@@ -54,6 +60,7 @@ export default function (state = initialState, action) {
         user: null,
         errorMessage: payload,
         showErrorToastr: true,
+        _crToken: null,
       };
     case SHOW_ERROR_TOASTER:
       return {
@@ -69,7 +76,7 @@ export default function (state = initialState, action) {
       };
     case AUTH_ERROR:
     case LOGOUT:
-      localStorage.removeItem("token");
+      localStorage.removeItem('token');
       return {
         ...state,
         token: null,
@@ -78,6 +85,7 @@ export default function (state = initialState, action) {
         user: null,
         errorMessage: null,
         showErrorToastr: false,
+        _crToken: null,
       };
     default:
       return state;

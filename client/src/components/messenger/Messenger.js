@@ -16,6 +16,7 @@ import {
   getChats,
   setCurrentUser,
 } from '../../actions/messaging';
+import { getCrToken } from '../../actions/auth';
 import { getOnlineUsers } from '../../actions/users';
 import { SocketContext } from '../../context';
 
@@ -28,6 +29,7 @@ const Messenger = ({
   currentUser,
   setCurrentUser,
   activeChats,
+  getCrToken,
 }) => {
   const { socket } = useContext(SocketContext);
 
@@ -100,6 +102,10 @@ const Messenger = ({
     }
   }, [currentUser, activeChats]);
 
+  useEffect(() => {
+    loggedInUser && getCrToken();
+  }, []);
+
   const container =
     window !== undefined ? () => window().document.body : undefined;
 
@@ -159,6 +165,7 @@ const Messenger = ({
 
 const mapStateToProps = ({ auth, messaging }) => ({
   loggedInUser: auth?.user,
+  // secret: auth?._crToken,
   currentUser: messaging?.currentUser,
   activeChats: messaging?.activeChats,
 });
@@ -168,4 +175,5 @@ export default connect(mapStateToProps, {
   getOnlineUsers,
   getChats,
   setCurrentUser,
+  getCrToken,
 })(Messenger);

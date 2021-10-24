@@ -1,21 +1,21 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const auth = require("../middleware/auth");
+const auth = require('../middleware/auth');
 
-const User = require("../dbmodels/User");
-const Message = require("../dbmodels/Message");
+const User = require('../dbmodels/User');
+const Message = require('../dbmodels/Message');
 
-router.get("/users", auth, async (req, res) => {
+router.get('/users', auth, async (req, res) => {
   const { q } = req.query;
   try {
     const users = await User.find({
       $or: [
-        { firstName: { $regex: q, $options: "i" } },
-        { lastName: { $regex: q, $options: "i" } },
-        { email: { $regex: q, $options: "i" } },
+        { firstName: { $regex: q, $options: 'i' } },
+        { lastName: { $regex: q, $options: 'i' } },
+        { email: { $regex: q, $options: 'i' } },
       ],
     })
-      .select("-password")
+      .select('-password')
       .sort({ _id: -1 })
       .exec();
 
@@ -49,7 +49,7 @@ router.get("/users", auth, async (req, res) => {
 //   }
 // });
 
-router.post("/history", auth, async (req, res) => {
+router.post('/history', auth, async (req, res) => {
   const { from, to } = req.body;
   try {
     let thread = await Message.findOne({
@@ -63,12 +63,12 @@ router.post("/history", auth, async (req, res) => {
       ],
     });
     if (!thread) {
-      return res.status(404).send("No messages found! Start chating!");
+      return res.status(404).send('No messages found! Start chating!');
     }
     res.json(thread);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 

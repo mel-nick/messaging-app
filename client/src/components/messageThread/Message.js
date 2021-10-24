@@ -3,8 +3,9 @@ import React from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import { makeStyles } from '@material-ui/core/styles';
 import { decrypter } from '../../utils/cryptoUtil';
+import { connect } from 'react-redux';
 
-const Message = ({ sender, loggedUser, text, currentUser }) => {
+const Message = ({ sender, loggedUser, text, currentUser, secret }) => {
   const useStyles = makeStyles((theme) => ({
     root: {
       display: 'flex',
@@ -44,7 +45,7 @@ const Message = ({ sender, loggedUser, text, currentUser }) => {
   return (
     <div className={classes.messageWrapper}>
       <p className='messageItem' style={p}>
-        {decrypter(text)}
+        {decrypter(text, secret)}
       </p>
       <Avatar
         className={classes.small}
@@ -55,5 +56,8 @@ const Message = ({ sender, loggedUser, text, currentUser }) => {
     </div>
   );
 };
+const mapStateToProps = ({ auth }) => ({
+  secret: auth?._crToken,
+});
 
-export default Message;
+export default connect(mapStateToProps, null)(Message);
