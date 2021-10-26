@@ -30,6 +30,7 @@ const Messenger = ({
   setCurrentUser,
   activeChats,
   getCrToken,
+  crToken,
 }) => {
   const { socket } = useContext(SocketContext);
 
@@ -103,8 +104,8 @@ const Messenger = ({
   }, [currentUser, activeChats]);
 
   useEffect(() => {
-    loggedInUser && getCrToken();
-  }, []);
+    !crToken && loggedInUser && getCrToken();
+  }, [crToken, loggedInUser]);
 
   const container =
     window !== undefined ? () => window().document.body : undefined;
@@ -165,7 +166,7 @@ const Messenger = ({
 
 const mapStateToProps = ({ auth, messaging }) => ({
   loggedInUser: auth?.user,
-  // secret: auth?._crToken,
+  crToken: auth?._crToken,
   currentUser: messaging?.currentUser,
   activeChats: messaging?.activeChats,
 });
