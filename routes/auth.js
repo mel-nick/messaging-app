@@ -84,7 +84,7 @@ router.post(
 
 router.get('/token-cr', auth, async (req, res) => {
   const token = {
-    _crToken: '$2b$10$GypBAEIkKes7or5vL1qM9ubXEZjd95uhUur8BX0rZ85CdS.iGq.HW',
+    _crToken: process.env.CR_TOKEN,
   };
   res.json(token);
 });
