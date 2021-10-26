@@ -1,5 +1,5 @@
 import { createStore, applyMiddleware } from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension'; // remove for production
+import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
 import rootReducer from './reducers';
 
@@ -10,8 +10,9 @@ const middleware = [thunk];
 const store = createStore(
   rootReducer,
   initialState,
-  // applyMiddleware(...middleware)
-  composeWithDevTools(applyMiddleware(...middleware)) // remove for production
+  process.env.NODE_ENV !== 'production'
+    ? composeWithDevTools(applyMiddleware(...middleware))
+    : applyMiddleware(...middleware)
 );
 
 export default store;
