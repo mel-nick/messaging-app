@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
 import { useStyles } from './userStyles';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import StyledBadge from './StyledBadge';
 
-const User = ({ user, onClickHandler, currentUser, online }) => {
+const User = ({ user, onClickHandler, online }) => {
+  const currentUser = useSelector(({ messaging }) => messaging?.currentUser);
+
   const classes = useStyles();
 
   const currentUserStyles = {
@@ -46,8 +48,4 @@ const User = ({ user, onClickHandler, currentUser, online }) => {
   );
 };
 
-const mapStateToProps = ({ messaging }) => ({
-  currentUser: messaging?.currentUser,
-});
-
-export default connect(mapStateToProps, null)(User);
+export default User;

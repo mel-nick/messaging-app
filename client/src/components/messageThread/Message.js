@@ -1,11 +1,12 @@
-/* eslint-disable no-dupe-keys */
 import React from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import { makeStyles } from '@material-ui/core/styles';
 import { decrypter } from '../../utils/cryptoUtil';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 
-const Message = ({ sender, loggedUser, text, currentUser, secret }) => {
+const Message = ({ sender, loggedUser, text, currentUser }) => {
+  const secret = useSelector(({ auth }) => auth?._crToken);
+
   const useStyles = makeStyles((theme) => ({
     root: {
       display: 'flex',
@@ -56,8 +57,5 @@ const Message = ({ sender, loggedUser, text, currentUser, secret }) => {
     </div>
   );
 };
-const mapStateToProps = ({ auth }) => ({
-  secret: auth?._crToken,
-});
 
-export default connect(mapStateToProps, null)(Message);
+export default Message;

@@ -3,12 +3,18 @@ import { useStyles } from './footerStyles';
 import Button from '@material-ui/core/Button';
 import SendIcon from '@material-ui/icons/Send';
 import TextField from '@material-ui/core/TextField';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { sendMessage } from '../../actions/messaging';
 import { SocketContext } from '../../context';
 import { encrypter } from '../../utils/cryptoUtil';
 
-const Footer = ({ currentUser, loggedUser, sendMessage, secret }) => {
+const Footer = () => {
+  const currentUser = useSelector(({ messaging }) => messaging?.currentUser);
+  const loggedUser = useSelector(({ auth }) => auth?.user);
+  const secret = useSelector(({ auth }) => auth?._crToken);
+
+  const dispatch = useDispatch();
+
   const { socket } = useContext(SocketContext);
 
   const classes = useStyles();
@@ -23,7 +29,9 @@ const Footer = ({ currentUser, loggedUser, sendMessage, secret }) => {
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (text) {
-      sendMessage({ ...text, from: loggedUser?._id, to: currentUser?._id });
+      dispatch(
+        sendMessage({ ...text, from: loggedUser?._id, to: currentUser?._id })
+      );
       socket.emit('sendMessage', {
         ...text,
         from: loggedUser?._id,
@@ -84,10 +92,4 @@ const Footer = ({ currentUser, loggedUser, sendMessage, secret }) => {
   );
 };
 
-const mapStateToProps = ({ messaging, auth }) => ({
-  currentUser: messaging?.currentUser,
-  loggedUser: auth?.user,
-  secret: auth?._crToken,
-});
-
-export default connect(mapStateToProps, { sendMessage })(Footer);
+export default Footer;

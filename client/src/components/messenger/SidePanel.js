@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { useStyles } from './messengerStyles';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
 import LogOutSwitch from './LogOutSwitch';
@@ -11,23 +11,23 @@ import ClearIcon from '@material-ui/icons/Clear';
 import User from '../user/User';
 import {
   setCurrentUser,
-  getMessages,
   addOnlineUserToActiveChats,
 } from '../../actions/messaging';
 
 const SidePanel = ({
-  loggedUser,
   searchString,
   setSearchString,
   searchResults,
   setSearchData,
-  setCurrentUser,
-  addOnlineUserToActiveChats,
-  currentUser,
-  onlineUsers,
-  activeChats,
   handleDrawerToggle,
 }) => {
+  const dispatch = useDispatch();
+
+  const loggedUser = useSelector(({ auth }) => auth?.user);
+  const currentUser = useSelector(({ messaging }) => messaging?.currentUser);
+  const activeChats = useSelector(({ messaging }) => messaging?.activeChats);
+  const onlineUsers = useSelector(({ messaging }) => messaging?.onlineUsers);
+
   const classes = useStyles();
 
   const handleSearchClear = () => {
@@ -89,9 +89,9 @@ const SidePanel = ({
                 user={user}
                 onClickHandler={() => {
                   if (currentUser?._id !== user?._id) {
-                    setCurrentUser(user);
+                    dispatch(setCurrentUser(user));
                   }
-                  addOnlineUserToActiveChats(user);
+                  dispatch(addOnlineUserToActiveChats(user));
                   handleSearchClear();
                   !!handleDrawerToggle && handleDrawerToggle(false);
                 }}
@@ -106,9 +106,9 @@ const SidePanel = ({
                   user={user}
                   onClickHandler={() => {
                     if (currentUser?._id !== user?._id) {
-                      setCurrentUser(user);
+                      dispatch(setCurrentUser(user));
                     }
-                    addOnlineUserToActiveChats(user);
+                    dispatch(addOnlineUserToActiveChats(user));
                     handleSearchClear();
                     !!handleDrawerToggle && handleDrawerToggle(false);
                   }}
@@ -119,15 +119,4 @@ const SidePanel = ({
   );
 };
 
-const mapStateToProps = ({ auth, messaging, onlineUsers }) => ({
-  loggedUser: auth?.user,
-  currentUser: messaging?.currentUser,
-  activeChats: messaging?.activeChats,
-  onlineUsers,
-});
-
-export default connect(mapStateToProps, {
-  setCurrentUser,
-  addOnlineUserToActiveChats,
-  getMessages,
-})(SidePanel);
+export default SidePanel;

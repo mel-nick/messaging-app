@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useCallback, useContext } from 'react';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
@@ -20,18 +20,14 @@ import { getCrToken } from '../../actions/auth';
 import { getOnlineUsers } from '../../actions/users';
 import { SocketContext } from '../../context';
 
-const Messenger = ({
-  window,
-  loggedInUser,
-  setArrivalMessage,
-  getOnlineUsers,
-  getChats,
-  currentUser,
-  setCurrentUser,
-  activeChats,
-  getCrToken,
-  crToken,
-}) => {
+const Messenger = ({ window }) => {
+  const loggedInUser = useSelector(({ auth }) => auth?.user);
+  const crToken = useSelector(({ auth }) => auth?._crToken);
+  const currentUser = useSelector(({ messaging }) => messaging?.currentUser);
+  const activeChats = useSelector(({ messaging }) => messaging?.activeChats);
+
+  const dispatch = useDispatch();
+
   const { socket } = useContext(SocketContext);
 
   const classes = useStyles();
@@ -61,7 +57,7 @@ const Messenger = ({
     if (socket && loggedInUser) {
       socket.connect();
       socket.emit('setUserOnline', loggedInUser);
-      socket.on('getOnlineUsers', (users) => getOnlineUsers(users));
+      socket.on('getOnlineUsers', (users) => dispatch(getOnlineUsers(users)));
     }
 
     if (socket) {
@@ -74,7 +70,7 @@ const Messenger = ({
         incomingMessage &&
         currentUser._id === incomingMessage?.from
       ) {
-        setArrivalMessage(incomingMessage);
+        dispatch(setArrivalMessage(incomingMessage));
       }
 
       socket.once('isTyping', ({ from, to }) => {
@@ -94,17 +90,17 @@ const Messenger = ({
   }, [loggedInUser, currentUser, incomingMessage, socket]);
 
   useEffect(() => {
-    loggedInUser && getChats(loggedInUser?._id);
+    loggedInUser && dispatch(getChats(loggedInUser?._id));
   }, [loggedInUser]);
 
   useEffect(() => {
     if (!currentUser && activeChats.length) {
-      setCurrentUser(activeChats[0]);
+      dispatch(setCurrentUser(activeChats[0]));
     }
   }, [currentUser, activeChats]);
 
   useEffect(() => {
-    !crToken && loggedInUser && getCrToken();
+    !crToken && loggedInUser && dispatch(getCrToken());
   }, [crToken, loggedInUser]);
 
   const container =
@@ -164,17 +160,4 @@ const Messenger = ({
   );
 };
 
-const mapStateToProps = ({ auth, messaging }) => ({
-  loggedInUser: auth?.user,
-  crToken: auth?._crToken,
-  currentUser: messaging?.currentUser,
-  activeChats: messaging?.activeChats,
-});
-
-export default connect(mapStateToProps, {
-  setArrivalMessage,
-  getOnlineUsers,
-  getChats,
-  setCurrentUser,
-  getCrToken,
-})(Messenger);
+export default Messenger;
