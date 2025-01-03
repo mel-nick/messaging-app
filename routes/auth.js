@@ -4,7 +4,7 @@ const auth = require('../middleware/auth');
 const User = require('../dbmodels/User');
 const jwt = require('jsonwebtoken');
 const { check, validationResult } = require('express-validator');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
 router.get('/', auth, async (req, res) => {

@@ -1,22 +1,22 @@
-const express = require("express");
-const bcrypt = require("bcrypt");
-const gravatar = require("gravatar");
-const jwt = require("jsonwebtoken");
-require("dotenv").config();
+const express = require('express');
+const bcrypt = require('bcryptjs');
+const gravatar = require('gravatar');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 const router = express.Router();
-const { check, validationResult } = require("express-validator");
+const { check, validationResult } = require('express-validator');
 
-const User = require("../dbmodels/User");
+const User = require('../dbmodels/User');
 
 router.post(
-  "/",
+  '/',
   [
-    check("firstName", "First name is required").not().isEmpty(),
-    check("lastName", "Last name is required").not().isEmpty(),
-    check("email", "Please include a valid email").isEmail(),
+    check('firstName', 'First name is required').not().isEmpty(),
+    check('lastName', 'Last name is required').not().isEmpty(),
+    check('email', 'Please include a valid email').isEmail(),
     check(
-      "password",
-      "Please enter a password with atleast 6 charackters"
+      'password',
+      'Please enter a password with atleast 6 charackters'
     ).isLength({
       min: 6,
     }),
@@ -37,15 +37,15 @@ router.post(
         return res.status(400).json({
           errors: [
             {
-              msg: "User already exists",
+              msg: 'User already exists',
             },
           ],
         });
       }
       const avatar = gravatar.url(email, {
-        s: "200",
-        r: "pg",
-        d: "mm",
+        s: '200',
+        r: 'pg',
+        d: 'mm',
       });
 
       user = new User({
@@ -80,7 +80,7 @@ router.post(
       );
     } catch (err) {
       console.error(err.message);
-      res.status(500).send("Server error");
+      res.status(500).send('Server error');
     }
   }
 );
